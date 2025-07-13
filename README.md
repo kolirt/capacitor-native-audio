@@ -49,14 +49,14 @@ npx cap sync
 ### configureSession(...)
 
 ```typescript
-configureSession(options: { enableAutoInterruptionHandling?: boolean; enableAutoIosSessionActivation?: boolean; iosCategory?: string; iosMode?: string; iosOptions?: string[]; }) => Promise<{ enableAutoHandling: boolean; iosCategory?: AVAudioSessionCategory; iosMode?: AVAudioSessionMode; iosOptions?: AVAudioSessionCategoryOptions[]; }>
+configureSession(options: ConfigureSessionOptions) => Promise<ConfigureSessionResponse>
 ```
 
-| Param         | Type                                                                                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ enableAutoInterruptionHandling?: boolean; enableAutoIosSessionActivation?: boolean; iosCategory?: string; iosMode?: string; iosOptions?: string[]; }</code> |
+| Param         | Type                                                                        |
+| ------------- | --------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#configuresessionoptions">ConfigureSessionOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ enableAutoHandling: boolean; iosCategory?: <a href="#avaudiosessioncategory">AVAudioSessionCategory</a>; iosMode?: <a href="#avaudiosessionmode">AVAudioSessionMode</a>; iosOptions?: AVAudioSessionCategoryOptions[]; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#configuresessionresponse">ConfigureSessionResponse</a>&gt;</code>
 
 --------------------
 
@@ -64,10 +64,10 @@ configureSession(options: { enableAutoInterruptionHandling?: boolean; enableAuto
 ### pauseAllAssets()
 
 ```typescript
-pauseAllAssets() => Promise<{ pausedAssetIds: string[]; }>
+pauseAllAssets() => Promise<PauseAllAssetsResponse>
 ```
 
-**Returns:** <code>Promise&lt;{ pausedAssetIds: string[]; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#pauseallassetsresponse">PauseAllAssetsResponse</a>&gt;</code>
 
 --------------------
 
@@ -75,10 +75,10 @@ pauseAllAssets() => Promise<{ pausedAssetIds: string[]; }>
 ### resumeAllAssets()
 
 ```typescript
-resumeAllAssets() => Promise<{ resumedAssetIds: string[]; }>
+resumeAllAssets() => Promise<ResumeAllAssetsResponse>
 ```
 
-**Returns:** <code>Promise&lt;{ resumedAssetIds: string[]; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#resumeallassetsresponse">ResumeAllAssetsResponse</a>&gt;</code>
 
 --------------------
 
@@ -86,12 +86,12 @@ resumeAllAssets() => Promise<{ resumedAssetIds: string[]; }>
 ### getAssets()
 
 ```typescript
-getAssets() => Promise<{ assets: string[]; }>
+getAssets() => Promise<GetAssetsResponse>
 ```
 
 Asset
 
-**Returns:** <code>Promise&lt;{ assets: string[]; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#getassetsresponse">GetAssetsResponse</a>&gt;</code>
 
 --------------------
 
@@ -99,14 +99,14 @@ Asset
 ### preloadAsset(...)
 
 ```typescript
-preloadAsset(options: { assetId: string; source: string; volume?: number; rate?: number; numberOfLoops?: number; }) => Promise<{ assetId: string; duration: number; }>
+preloadAsset(options: PreloadAssetOptions) => Promise<PreloadAssetResponse>
 ```
 
-| Param         | Type                                                                                                      |
-| ------------- | --------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ assetId: string; source: string; volume?: number; rate?: number; numberOfLoops?: number; }</code> |
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`options`** | <code><a href="#preloadassetoptions">PreloadAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; duration: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#preloadassetresponse">PreloadAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -114,14 +114,14 @@ preloadAsset(options: { assetId: string; source: string; volume?: number; rate?:
 ### unloadAsset(...)
 
 ```typescript
-unloadAsset(options: { assetId: string; }) => Promise<{ assetId: string; }>
+unloadAsset(options: UnloadAssetOptions) => Promise<UnloadAssetResponse>
 ```
 
-| Param         | Type                              |
-| ------------- | --------------------------------- |
-| **`options`** | <code>{ assetId: string; }</code> |
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#unloadassetoptions">UnloadAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#unloadassetresponse">UnloadAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -129,14 +129,14 @@ unloadAsset(options: { assetId: string; }) => Promise<{ assetId: string; }>
 ### getAssetState(...)
 
 ```typescript
-getAssetState(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying: boolean; currentTime: number; duration: number; }>
+getAssetState(options: GetAssetStateOptions) => Promise<GetAssetStateResponse>
 ```
 
-| Param         | Type                              |
-| ------------- | --------------------------------- |
-| **`options`** | <code>{ assetId: string; }</code> |
+| Param         | Type                                                                  |
+| ------------- | --------------------------------------------------------------------- |
+| **`options`** | <code><a href="#getassetstateoptions">GetAssetStateOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; isPlaying: boolean; currentTime: number; duration: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#getassetstateresponse">GetAssetStateResponse</a>&gt;</code>
 
 --------------------
 
@@ -144,14 +144,14 @@ getAssetState(options: { assetId: string; }) => Promise<{ assetId: string; isPla
 ### playAsset(...)
 
 ```typescript
-playAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying: boolean; }>
+playAsset(options: PlayAssetOptions) => Promise<PlayAssetResponse>
 ```
 
-| Param         | Type                              |
-| ------------- | --------------------------------- |
-| **`options`** | <code>{ assetId: string; }</code> |
+| Param         | Type                                                          |
+| ------------- | ------------------------------------------------------------- |
+| **`options`** | <code><a href="#playassetoptions">PlayAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; isPlaying: boolean; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#playassetresponse">PlayAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -159,14 +159,14 @@ playAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying
 ### pauseAsset(...)
 
 ```typescript
-pauseAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying: boolean; }>
+pauseAsset(options: PauseAssetOptions) => Promise<PauseAssetResponse>
 ```
 
-| Param         | Type                              |
-| ------------- | --------------------------------- |
-| **`options`** | <code>{ assetId: string; }</code> |
+| Param         | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| **`options`** | <code><a href="#pauseassetoptions">PauseAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; isPlaying: boolean; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#pauseassetresponse">PauseAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -174,14 +174,14 @@ pauseAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlayin
 ### stopAsset(...)
 
 ```typescript
-stopAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying: boolean; }>
+stopAsset(options: StopAssetOptions) => Promise<StopAssetResponse>
 ```
 
-| Param         | Type                              |
-| ------------- | --------------------------------- |
-| **`options`** | <code>{ assetId: string; }</code> |
+| Param         | Type                                                          |
+| ------------- | ------------------------------------------------------------- |
+| **`options`** | <code><a href="#stopassetoptions">StopAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; isPlaying: boolean; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#stopassetresponse">StopAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -189,14 +189,14 @@ stopAsset(options: { assetId: string; }) => Promise<{ assetId: string; isPlaying
 ### seekAsset(...)
 
 ```typescript
-seekAsset(options: { assetId: string; time: number; }) => Promise<{ assetId: string; currentTime: number; }>
+seekAsset(options: SeekAssetOptions) => Promise<SeekAssetResponse>
 ```
 
-| Param         | Type                                            |
-| ------------- | ----------------------------------------------- |
-| **`options`** | <code>{ assetId: string; time: number; }</code> |
+| Param         | Type                                                          |
+| ------------- | ------------------------------------------------------------- |
+| **`options`** | <code><a href="#seekassetoptions">SeekAssetOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; currentTime: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#seekassetresponse">SeekAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -204,14 +204,14 @@ seekAsset(options: { assetId: string; time: number; }) => Promise<{ assetId: str
 ### setAssetVolume(...)
 
 ```typescript
-setAssetVolume(options: { assetId: string; volume: number; }) => Promise<{ assetId: string; volume: number; }>
+setAssetVolume(options: SetAssetVolumeOptions) => Promise<SetAssetVolumeResponse>
 ```
 
-| Param         | Type                                              |
-| ------------- | ------------------------------------------------- |
-| **`options`** | <code>{ assetId: string; volume: number; }</code> |
+| Param         | Type                                                                    |
+| ------------- | ----------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setassetvolumeoptions">SetAssetVolumeOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; volume: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setassetvolumeresponse">SetAssetVolumeResponse</a>&gt;</code>
 
 --------------------
 
@@ -219,14 +219,14 @@ setAssetVolume(options: { assetId: string; volume: number; }) => Promise<{ asset
 ### setAssetRate(...)
 
 ```typescript
-setAssetRate(options: { assetId: string; rate: number; }) => Promise<{ assetId: string; rate: number; }>
+setAssetRate(options: SetAssetRateOptions) => Promise<SetAssetRateResponse>
 ```
 
-| Param         | Type                                            |
-| ------------- | ----------------------------------------------- |
-| **`options`** | <code>{ assetId: string; rate: number; }</code> |
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setassetrateoptions">SetAssetRateOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; rate: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setassetrateresponse">SetAssetRateResponse</a>&gt;</code>
 
 --------------------
 
@@ -234,14 +234,14 @@ setAssetRate(options: { assetId: string; rate: number; }) => Promise<{ assetId: 
 ### setAssetNumberOfLoops(...)
 
 ```typescript
-setAssetNumberOfLoops(options: { assetId: string; numberOfLoops: number; }) => Promise<{ assetId: string; numberOfLoops: number; }>
+setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions) => Promise<SetAssetNumberOfLoopsResponse>
 ```
 
-| Param         | Type                                                     |
-| ------------- | -------------------------------------------------------- |
-| **`options`** | <code>{ assetId: string; numberOfLoops: number; }</code> |
+| Param         | Type                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setassetnumberofloopsoptions">SetAssetNumberOfLoopsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ assetId: string; numberOfLoops: number; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setassetnumberofloopsresponse">SetAssetNumberOfLoopsResponse</a>&gt;</code>
 
 --------------------
 
@@ -429,11 +429,306 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 ### Interfaces
 
 
+#### ConfigureSessionResponse
+
+| Prop                     | Type                                                                      |
+| ------------------------ | ------------------------------------------------------------------------- |
+| **`enableAutoHandling`** | <code>boolean</code>                                                      |
+| **`iosCategory`**        | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> |
+| **`iosMode`**            | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         |
+| **`iosOptions`**         | <code>AVAudioSessionCategoryOptions[]</code>                              |
+
+
+#### ConfigureSessionOptions
+
+| Prop                                 | Type                  |
+| ------------------------------------ | --------------------- |
+| **`enableAutoInterruptionHandling`** | <code>boolean</code>  |
+| **`enableAutoIosSessionActivation`** | <code>boolean</code>  |
+| **`iosCategory`**                    | <code>string</code>   |
+| **`iosMode`**                        | <code>string</code>   |
+| **`iosOptions`**                     | <code>string[]</code> |
+
+
+#### PauseAllAssetsResponse
+
+| Prop                 | Type                  |
+| -------------------- | --------------------- |
+| **`pausedAssetIds`** | <code>string[]</code> |
+
+
+#### ResumeAllAssetsResponse
+
+| Prop                  | Type                  |
+| --------------------- | --------------------- |
+| **`resumedAssetIds`** | <code>string[]</code> |
+
+
+#### GetAssetsResponse
+
+Asset
+
+| Prop         | Type                  |
+| ------------ | --------------------- |
+| **`assets`** | <code>string[]</code> |
+
+
+#### PreloadAssetResponse
+
+| Prop           | Type                |
+| -------------- | ------------------- |
+| **`assetId`**  | <code>string</code> |
+| **`duration`** | <code>number</code> |
+
+
+#### PreloadAssetOptions
+
+| Prop                | Type                |
+| ------------------- | ------------------- |
+| **`assetId`**       | <code>string</code> |
+| **`source`**        | <code>string</code> |
+| **`volume`**        | <code>number</code> |
+| **`rate`**          | <code>number</code> |
+| **`numberOfLoops`** | <code>number</code> |
+
+
+#### UnloadAssetResponse
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### UnloadAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### GetAssetStateResponse
+
+| Prop              | Type                 |
+| ----------------- | -------------------- |
+| **`assetId`**     | <code>string</code>  |
+| **`isPlaying`**   | <code>boolean</code> |
+| **`currentTime`** | <code>number</code>  |
+| **`duration`**    | <code>number</code>  |
+
+
+#### GetAssetStateOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### PlayAssetResponse
+
+| Prop            | Type                 |
+| --------------- | -------------------- |
+| **`assetId`**   | <code>string</code>  |
+| **`isPlaying`** | <code>boolean</code> |
+
+
+#### PlayAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### PauseAssetResponse
+
+| Prop            | Type                 |
+| --------------- | -------------------- |
+| **`assetId`**   | <code>string</code>  |
+| **`isPlaying`** | <code>boolean</code> |
+
+
+#### PauseAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### StopAssetResponse
+
+| Prop            | Type                 |
+| --------------- | -------------------- |
+| **`assetId`**   | <code>string</code>  |
+| **`isPlaying`** | <code>boolean</code> |
+
+
+#### StopAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### SeekAssetResponse
+
+| Prop              | Type                |
+| ----------------- | ------------------- |
+| **`assetId`**     | <code>string</code> |
+| **`currentTime`** | <code>number</code> |
+
+
+#### SeekAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+| **`time`**    | <code>number</code> |
+
+
+#### SetAssetVolumeResponse
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+| **`volume`**  | <code>number</code> |
+
+
+#### SetAssetVolumeOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+| **`volume`**  | <code>number</code> |
+
+
+#### SetAssetRateResponse
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+| **`rate`**    | <code>number</code> |
+
+
+#### SetAssetRateOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+| **`rate`**    | <code>number</code> |
+
+
+#### SetAssetNumberOfLoopsResponse
+
+| Prop                | Type                |
+| ------------------- | ------------------- |
+| **`assetId`**       | <code>string</code> |
+| **`numberOfLoops`** | <code>number</code> |
+
+
+#### SetAssetNumberOfLoopsOptions
+
+| Prop                | Type                |
+| ------------------- | ------------------- |
+| **`assetId`**       | <code>string</code> |
+| **`numberOfLoops`** | <code>number</code> |
+
+
 #### PluginListenerHandle
 
 | Prop         | Type                                      |
 | ------------ | ----------------------------------------- |
 | **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+#### SessionInterruptedEvent
+
+| Prop            | Type                              |
+| --------------- | --------------------------------- |
+| **`eventName`** | <code>'sessionInterrupted'</code> |
+| **`state`**     | <code>'began' \| 'ended'</code>   |
+
+
+#### SessionRouteChangedEvent
+
+| Prop            | Type                               |
+| --------------- | ---------------------------------- |
+| **`eventName`** | <code>'sessionRouteChanged'</code> |
+| **`reason`**    | <code>number</code>                |
+
+
+#### AssetLoadedEvent
+
+| Prop            | Type                       |
+| --------------- | -------------------------- |
+| **`eventName`** | <code>'assetLoaded'</code> |
+| **`assetId`**   | <code>string</code>        |
+| **`duration`**  | <code>number</code>        |
+
+
+#### AssetUnloadedEvent
+
+| Prop            | Type                         |
+| --------------- | ---------------------------- |
+| **`eventName`** | <code>'assetUnloaded'</code> |
+| **`assetId`**   | <code>string</code>          |
+
+
+#### AssetStartedEvent
+
+| Prop            | Type                        |
+| --------------- | --------------------------- |
+| **`eventName`** | <code>'assetStarted'</code> |
+| **`assetId`**   | <code>string</code>         |
+
+
+#### AssetPausedEvent
+
+| Prop            | Type                       |
+| --------------- | -------------------------- |
+| **`eventName`** | <code>'assetPaused'</code> |
+| **`assetId`**   | <code>string</code>        |
+
+
+#### AssetStoppedEvent
+
+| Prop            | Type                        |
+| --------------- | --------------------------- |
+| **`eventName`** | <code>'assetStopped'</code> |
+| **`assetId`**   | <code>string</code>         |
+
+
+#### AssetSeekedEvent
+
+| Prop              | Type                       |
+| ----------------- | -------------------------- |
+| **`eventName`**   | <code>'assetSeeked'</code> |
+| **`assetId`**     | <code>string</code>        |
+| **`currentTime`** | <code>number</code>        |
+
+
+#### AssetCompletedEvent
+
+| Prop            | Type                          |
+| --------------- | ----------------------------- |
+| **`eventName`** | <code>'assetCompleted'</code> |
+| **`assetId`**   | <code>string</code>           |
+
+
+#### AssetErrorEvent
+
+| Prop            | Type                      |
+| --------------- | ------------------------- |
+| **`eventName`** | <code>'assetError'</code> |
+| **`assetId`**   | <code>string</code>       |
+| **`error`**     | <code>string</code>       |
+
+
+#### AssetPositionUpdateEvent
+
+| Prop              | Type                               |
+| ----------------- | ---------------------------------- |
+| **`eventName`**   | <code>'assetPositionUpdate'</code> |
+| **`assetId`**     | <code>string</code>                |
+| **`currentTime`** | <code>number</code>                |
 
 
 ### Type Aliases
@@ -454,63 +749,8 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 <code>'mixWithOthers' | 'duckOthers' | 'interruptSpokenAudioAndMixWithOthers' | 'allowBluetoothA2DP' | 'allowAirPlay' | 'defaultToSpeaker' | 'overrideMutedMicrophoneInterruption'</code>
 
 
-#### SessionInterruptedEvent
-
-<code>{ eventName: 'sessionInterrupted'; state: 'began' | 'ended' }</code>
-
-
-#### SessionRouteChangedEvent
-
-<code>{ eventName: 'sessionRouteChanged'; reason: number }</code>
-
-
-#### AssetLoadedEvent
-
-<code>{ eventName: 'assetLoaded'; assetId: string; duration: number }</code>
-
-
 #### EventListener
 
 <code>(data: T): void</code>
-
-
-#### AssetUnloadedEvent
-
-<code>{ eventName: 'assetUnloaded'; assetId: string }</code>
-
-
-#### AssetStartedEvent
-
-<code>{ eventName: 'assetStarted'; assetId: string }</code>
-
-
-#### AssetPausedEvent
-
-<code>{ eventName: 'assetPaused'; assetId: string }</code>
-
-
-#### AssetStoppedEvent
-
-<code>{ eventName: 'assetStopped'; assetId: string }</code>
-
-
-#### AssetSeekedEvent
-
-<code>{ eventName: 'assetSeeked'; assetId: string; currentTime: number }</code>
-
-
-#### AssetCompletedEvent
-
-<code>{ eventName: 'assetCompleted'; assetId: string }</code>
-
-
-#### AssetErrorEvent
-
-<code>{ eventName: 'assetError'; assetId: string; error: string }</code>
-
-
-#### AssetPositionUpdateEvent
-
-<code>{ eventName: 'assetPositionUpdate'; assetId: string; currentTime: number }</code>
 
 </docgen-api>
