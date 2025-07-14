@@ -3,7 +3,8 @@ import AVFoundation
 @objc public class AssetPlayer: NSObject, AVAudioPlayerDelegate {
     private let player: AVAudioPlayer
     private let assetId: String
-    private let updateInterval: TimeInterval
+    private var enablePositionUpdates: Bool
+    private var positionUpdateInterval: TimeInterval
     private weak var delegate: NativeAudio?
     private var timer: Timer?
 
@@ -12,14 +13,21 @@ import AVFoundation
         url: URL,
         volume: Float,
         rate: Float,
-        numberOfLoops: Int = 0,
-        updateInterval: TimeInterval = 0.25,
+        numberOfLoops: Int,
+        enablePositionUpdates: Bool,
+        positionUpdateInterval: TimeInterval,
         delegate: NativeAudio
     ) throws {
         self.player = try AVAudioPlayer(contentsOf: url)
         self.assetId = assetId
-        self.updateInterval = updateInterval
+        self.enablePositionUpdates = enablePositionUpdates
+        self.positionUpdateInterval = max(0.1, min(2.0, positionUpdateInterval))
         self.delegate = delegate
+
+        // print rate numberOfloops and volume  and positionUpdateInterval
+        print(
+            "AssetPlayer initialized with assetId: \(assetId), volume: \(volume), rate: \(rate), numberOfLoops: \(numberOfLoops), positionUpdateInterval: \(positionUpdateInterval)"
+        )
 
         super.init()
 
@@ -52,7 +60,6 @@ import AVFoundation
 
     @objc public func play() -> Bool {
         if !self.isPlaying {
-
             if self.player.play() {
                 self.startPositionUpdates()
                 self.delegate?.onAssetStarted(self.assetId)
@@ -75,12 +82,10 @@ import AVFoundation
     @objc public func stop() -> Bool {
         if self.isPlaying {
             self.player.stop()
-            self.player.currentTime = 0
             self.stopPositionUpdates()
-            self.delegate?.onAssetStopped(self.assetId)
-        } else {
-            self.player.currentTime = 0
         }
+        self.delegate?.onAssetStopped(self.assetId)
+        self.player.currentTime = 0
 
         return self.isPlaying
     }
@@ -106,14 +111,45 @@ import AVFoundation
         return self.player.numberOfLoops
     }
 
+    @objc public func setEnablePositionUpdates(_ enabled: Bool) -> Bool {
+        let oldValue = self.enablePositionUpdates
+        self.enablePositionUpdates = enabled
+
+        if enabled && !oldValue {
+            if self.isPlaying {
+                self.startPositionUpdates()
+            }
+        } else if !enabled && oldValue {
+            self.stopPositionUpdates()
+        }
+
+        return enabled
+    }
+
+    @objc public func setPositionUpdateInterval(_ interval: TimeInterval) -> TimeInterval {
+        let clampedInterval = max(0.1, min(2.0, interval))
+        self.positionUpdateInterval = clampedInterval
+
+        if self.enablePositionUpdates && self.isPlaying {
+            self.stopPositionUpdates()
+            self.startPositionUpdates()
+        }
+
+        return clampedInterval
+    }
+
     private func startPositionUpdates() {
         self.timer?.invalidate()
+
+        guard self.enablePositionUpdates else { return }
+
         DispatchQueue.main.async { [weak self] in
             guard
                 let self = self
             else { return }
-            self.timer = Timer.scheduledTimer(withTimeInterval: self.updateInterval, repeats: true)
-            {
+            self.timer = Timer.scheduledTimer(
+                withTimeInterval: self.positionUpdateInterval, repeats: true
+            ) {
                 [weak self] _ in
                 guard
                     let self = self,

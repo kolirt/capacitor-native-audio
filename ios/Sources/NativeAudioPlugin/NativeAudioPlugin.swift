@@ -26,6 +26,8 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "setAssetVolume", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setAssetRate", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setAssetNumberOfLoops", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setAssetEnablePositionUpdates", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setAssetPositionUpdateInterval", returnType: CAPPluginReturnPromise),
     ]
     private let implementation = NativeAudio()
 
@@ -104,7 +106,6 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func configureSession(_ call: CAPPluginCall) {
         let enableAutoInterruptionHandlingBool = call.getBool("enableAutoInterruptionHandling")
         let enableAutoIosSessionDeactivationBool = call.getBool("enableAutoIosSessionDeactivation")
-        let positionUpdateIntervalBool = call.getDouble("positionUpdateInterval")
         let iosCategory = call.getString("iosCategory")
         let iosMode = call.getString("iosMode")
         let iosOptions = call.getArray("iosOptions", String.self)
@@ -115,15 +116,11 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         let enableAutoIosSessionDeactivation: NSNumber? = enableAutoIosSessionDeactivationBool.map {
             NSNumber(booleanLiteral: $0)
         }
-        let positionUpdateInterval: NSNumber? = positionUpdateIntervalBool.map {
-            NSNumber(value: $0)
-        }
 
         do {
             try self.implementation.configureSession(
                 enableAutoInterruptionHandling: enableAutoInterruptionHandling,
                 enableAutoIosSessionDeactivation: enableAutoIosSessionDeactivation,
-                positionUpdateInterval: positionUpdateInterval,
                 iosCategory: iosCategory,
                 iosMode: iosMode,
                 iosOptions: iosOptions
@@ -163,9 +160,16 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("Missing assetId or source")
             return
         }
-        let volume = call.getFloat("volume") ?? 1.0
-        let rate = call.getFloat("rate") ?? 1.0
-        let numberOfLoops = call.getInt("numberOfLoops") ?? 0
+
+        let volume: NSNumber? = call.getFloat("volume").map { NSNumber(value: $0) }
+        let rate: NSNumber? = call.getFloat("rate").map { NSNumber(value: $0) }
+        let numberOfLoops: NSNumber? = call.getInt("numberOfLoops").map { NSNumber(value: $0) }
+        let enablePositionUpdates = call.getBool("enablePositionUpdates").map {
+            NSNumber(booleanLiteral: $0)
+        }
+        let positionUpdateInterval = call.getDouble("positionUpdateInterval").map {
+            NSNumber(value: $0)
+        }
 
         Task {
             do {
@@ -174,7 +178,9 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
                     source: source,
                     volume: volume,
                     rate: rate,
-                    numberOfLoops: numberOfLoops
+                    numberOfLoops: numberOfLoops,
+                    enablePositionUpdates: enablePositionUpdates,
+                    positionUpdateInterval: positionUpdateInterval
                 )
                 call.resolve(result)
             } catch {
@@ -335,6 +341,38 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             call.resolve(result)
         } catch {
             call.reject("Failed to set numberOfLoops: \(error.localizedDescription)")
+        }
+    }
+
+    @objc func setAssetEnablePositionUpdates(_ call: CAPPluginCall) {
+        guard
+            let assetId = call.getString("assetId"),
+            let enabled = call.getBool("enabled")
+        else {
+            call.reject("Missing assetId or enabled")
+            return
+        }
+        do {
+            let result = try self.implementation.setAssetEnablePositionUpdates(assetId, enabled: enabled)
+            call.resolve(result)
+        } catch {
+            call.reject("Failed to set enablePositionUpdates: \(error.localizedDescription)")
+        }
+    }
+
+    @objc func setAssetPositionUpdateInterval(_ call: CAPPluginCall) {
+        guard
+            let assetId = call.getString("assetId"),
+            let interval = call.getDouble("positionUpdateInterval")
+        else {
+            call.reject("Missing assetId or positionUpdateInterval")
+            return
+        }
+        do {
+            let result = try self.implementation.setAssetPositionUpdateInterval(assetId, interval: interval)
+            call.resolve(result)
+        } catch {
+            call.reject("Failed to set positionUpdateInterval: \(error.localizedDescription)")
         }
     }
 

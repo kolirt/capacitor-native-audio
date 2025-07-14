@@ -27,6 +27,8 @@ npx cap sync
 * [`setAssetVolume(...)`](#setassetvolume)
 * [`setAssetRate(...)`](#setassetrate)
 * [`setAssetNumberOfLoops(...)`](#setassetnumberofloops)
+* [`setAssetEnablePositionUpdates(...)`](#setassetenablepositionupdates)
+* [`setAssetPositionUpdateInterval(...)`](#setassetpositionupdateinterval)
 * [`addListener('sessionInterrupted', ...)`](#addlistenersessioninterrupted-)
 * [`addListener('sessionRouteChanged', ...)`](#addlistenersessionroutechanged-)
 * [`addListener('assetLoaded', ...)`](#addlistenerassetloaded-)
@@ -246,6 +248,36 @@ setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions) => Promise<SetAsset
 --------------------
 
 
+### setAssetEnablePositionUpdates(...)
+
+```typescript
+setAssetEnablePositionUpdates(options: SetAssetEnablePositionUpdatesOptions) => Promise<SetAssetEnablePositionUpdatesResponse>
+```
+
+| Param         | Type                                                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setassetenablepositionupdatesoptions">SetAssetEnablePositionUpdatesOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#setassetenablepositionupdatesresponse">SetAssetEnablePositionUpdatesResponse</a>&gt;</code>
+
+--------------------
+
+
+### setAssetPositionUpdateInterval(...)
+
+```typescript
+setAssetPositionUpdateInterval(options: SetAssetPositionUpdateIntervalOptions) => Promise<SetAssetPositionUpdateIntervalResponse>
+```
+
+| Param         | Type                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setassetpositionupdateintervaloptions">SetAssetPositionUpdateIntervalOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#setassetpositionupdateintervalresponse">SetAssetPositionUpdateIntervalResponse</a>&gt;</code>
+
+--------------------
+
+
 ### addListener('sessionInterrupted', ...)
 
 ```typescript
@@ -435,7 +467,6 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 | -------------------------------------- | ------------------------------------------------------------------------- |
 | **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      |
 | **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      |
-| **`positionUpdateInterval`**           | <code>number</code>                                                       |
 | **`iosCategory`**                      | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> |
 | **`iosMode`**                          | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         |
 | **`iosOptions`**                       | <code>AVAudioSessionCategoryOptions[]</code>                              |
@@ -474,13 +505,15 @@ Asset
 
 #### PreloadAssetOptions
 
-| Prop                | Type                |
-| ------------------- | ------------------- |
-| **`assetId`**       | <code>string</code> |
-| **`source`**        | <code>string</code> |
-| **`volume`**        | <code>number</code> |
-| **`rate`**          | <code>number</code> |
-| **`numberOfLoops`** | <code>number</code> |
+| Prop                         | Type                 |
+| ---------------------------- | -------------------- |
+| **`assetId`**                | <code>string</code>  |
+| **`source`**                 | <code>string</code>  |
+| **`volume`**                 | <code>number</code>  |
+| **`rate`**                   | <code>number</code>  |
+| **`numberOfLoops`**          | <code>number</code>  |
+| **`enablePositionUpdates`**  | <code>boolean</code> |
+| **`positionUpdateInterval`** | <code>number</code>  |
 
 
 #### UnloadAssetResponse
@@ -621,6 +654,38 @@ Asset
 | ------------------- | ------------------- |
 | **`assetId`**       | <code>string</code> |
 | **`numberOfLoops`** | <code>number</code> |
+
+
+#### SetAssetEnablePositionUpdatesResponse
+
+| Prop                        | Type                 |
+| --------------------------- | -------------------- |
+| **`assetId`**               | <code>string</code>  |
+| **`enablePositionUpdates`** | <code>boolean</code> |
+
+
+#### SetAssetEnablePositionUpdatesOptions
+
+| Prop          | Type                 |
+| ------------- | -------------------- |
+| **`assetId`** | <code>string</code>  |
+| **`enabled`** | <code>boolean</code> |
+
+
+#### SetAssetPositionUpdateIntervalResponse
+
+| Prop                         | Type                |
+| ---------------------------- | ------------------- |
+| **`assetId`**                | <code>string</code> |
+| **`positionUpdateInterval`** | <code>number</code> |
+
+
+#### SetAssetPositionUpdateIntervalOptions
+
+| Prop                         | Type                |
+| ---------------------------- | ------------------- |
+| **`assetId`**                | <code>string</code> |
+| **`positionUpdateInterval`** | <code>number</code> |
 
 
 #### PluginListenerHandle

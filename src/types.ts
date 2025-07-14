@@ -23,7 +23,6 @@ type AVAudioSessionCategoryOptions =
 export interface ConfigureSessionOptions {
   enableAutoInterruptionHandling?: boolean;
   enableAutoIosSessionDeactivation?: boolean;
-  positionUpdateInterval?: number;
   iosCategory?: AVAudioSessionCategory;
   iosMode?: AVAudioSessionMode;
   iosOptions?: AVAudioSessionCategoryOptions[];
@@ -51,6 +50,8 @@ export interface PreloadAssetOptions {
   volume?: number;
   rate?: number;
   numberOfLoops?: number;
+  enablePositionUpdates?: boolean;
+  positionUpdateInterval?: number;
 }
 
 export interface PreloadAssetResponse {
@@ -142,6 +143,26 @@ export interface SetAssetNumberOfLoopsOptions {
 export interface SetAssetNumberOfLoopsResponse {
   assetId: string;
   numberOfLoops: number;
+}
+
+export interface SetAssetEnablePositionUpdatesOptions {
+  assetId: string;
+  enabled: boolean;
+}
+
+export interface SetAssetEnablePositionUpdatesResponse {
+  assetId: string;
+  enablePositionUpdates: boolean;
+}
+
+export interface SetAssetPositionUpdateIntervalOptions {
+  assetId: string;
+  positionUpdateInterval: number;
+}
+
+export interface SetAssetPositionUpdateIntervalResponse {
+  assetId: string;
+  positionUpdateInterval: number;
 }
 
 export type EventListener<T> = (data: T) => void;

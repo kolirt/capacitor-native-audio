@@ -23,6 +23,10 @@ import type {
   SeekAssetResponse,
   SetAssetNumberOfLoopsOptions,
   SetAssetNumberOfLoopsResponse,
+  SetAssetEnablePositionUpdatesOptions,
+  SetAssetEnablePositionUpdatesResponse,
+  SetAssetPositionUpdateIntervalOptions,
+  SetAssetPositionUpdateIntervalResponse,
   StopAssetOptions,
   StopAssetResponse,
   SessionInterruptedEvent,
@@ -59,6 +63,8 @@ interface NativeAudioPlugin {
   setAssetVolume(options: SetAssetVolumeOptions): Promise<SetAssetVolumeResponse>;
   setAssetRate(options: SetAssetRateOptions): Promise<SetAssetRateResponse>;
   setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions): Promise<SetAssetNumberOfLoopsResponse>;
+  setAssetEnablePositionUpdates(options: SetAssetEnablePositionUpdatesOptions): Promise<SetAssetEnablePositionUpdatesResponse>;
+  setAssetPositionUpdateInterval(options: SetAssetPositionUpdateIntervalOptions): Promise<SetAssetPositionUpdateIntervalResponse>;
 
   /**
    * Event Listeners

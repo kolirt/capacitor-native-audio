@@ -4,7 +4,6 @@ import AVFoundation
 @objc public class NativeAudio: NSObject {
     private var enableAutoInterruptionHandling = true
     private var enableAutoIosSessionDeactivation = true
-    private var positionUpdateInterval: TimeInterval = 0.25
 
     private var assetPlayers: [String: AssetPlayer] = [:]
     private var pausedByInterruptionAssetIds: [String] = []
@@ -21,7 +20,6 @@ import AVFoundation
     @objc public func configureSession(
         enableAutoInterruptionHandling: NSNumber?,
         enableAutoIosSessionDeactivation: NSNumber?,
-        positionUpdateInterval: NSNumber?,
         iosCategory: String?,
         iosMode: String?,
         iosOptions: [String]?
@@ -32,10 +30,6 @@ import AVFoundation
 
         if let enableAutoIosSessionDeactivationBool = enableAutoIosSessionDeactivation?.boolValue {
             self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
-        }
-
-        if let positionUpdateIntervalValue = positionUpdateInterval?.doubleValue {
-            self.positionUpdateInterval = max(0.1, min(2.0, positionUpdateIntervalValue))
         }
 
         if iosCategory != nil || iosMode != nil || iosOptions != nil {
@@ -146,9 +140,11 @@ import AVFoundation
     @objc public func preloadAsset(
         _ assetId: String,
         source: String,
-        volume: Float,
-        rate: Float,
-        numberOfLoops: Int
+        volume: NSNumber?,
+        rate: NSNumber?,
+        numberOfLoops: NSNumber?,
+        enablePositionUpdates: NSNumber?,
+        positionUpdateInterval: NSNumber?
     ) async throws -> [String: Any] {
         if let _ = self.assetPlayers[assetId] {
             self.assetPlayers.removeValue(forKey: assetId)
@@ -159,10 +155,11 @@ import AVFoundation
         let assetPlayer = try AssetPlayer(
             assetId,
             url: url,
-            volume: volume,
-            rate: rate,
-            numberOfLoops: numberOfLoops,
-            updateInterval: self.positionUpdateInterval,
+            volume: volume?.floatValue ?? 1.0,
+            rate: rate?.floatValue ?? 1.0,
+            numberOfLoops: numberOfLoops?.intValue ?? 0,
+            enablePositionUpdates: enablePositionUpdates?.boolValue ?? false,
+            positionUpdateInterval: positionUpdateInterval?.doubleValue ?? 0.25,
             delegate: self
         )
 
@@ -312,6 +309,30 @@ import AVFoundation
         return ["assetId": assetId, "numberOfLoops": assetPlayer.setNumberOfLoops(numberOfLoops)]
     }
 
+    @objc public func setAssetEnablePositionUpdates(_ assetId: String, enabled: Bool) throws -> [String: Any] {
+        guard
+            let assetPlayer = self.assetPlayers[assetId]
+        else {
+            throw NSError(
+                domain: "NativeAudio", code: -3,
+                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
+            )
+        }
+        return ["assetId": assetId, "enablePositionUpdates": assetPlayer.setEnablePositionUpdates(enabled)]
+    }
+
+    @objc public func setAssetPositionUpdateInterval(_ assetId: String, interval: TimeInterval) throws -> [String: Any] {
+        guard
+            let assetPlayer = self.assetPlayers[assetId]
+        else {
+            throw NSError(
+                domain: "NativeAudio", code: -3,
+                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
+            )
+        }
+        return ["assetId": assetId, "positionUpdateInterval": assetPlayer.setPositionUpdateInterval(interval)]
+    }
+
     /**
      * Events
      */
@@ -401,9 +422,7 @@ import AVFoundation
         if isActivating {
             do {
                 try audioSession.setActive(true)
-                print("NativeAudio: Audio session activated successfully")
             } catch {
-                print("NativeAudio: Failed to activate audio session: \(error.localizedDescription)")
             }
         } else {
             let allStopped = assetPlayers.values.allSatisfy { !$0.isPlaying }
@@ -411,12 +430,8 @@ import AVFoundation
             if allStopped && self.enableAutoIosSessionDeactivation {
                 do {
                     try audioSession.setActive(false)
-                    print("NativeAudio: Audio session deactivated successfully")
                 } catch {
-                    print("NativeAudio: Failed to deactivate audio session: \(error.localizedDescription)")
                 }
-            } else {
-                print("NativeAudio: Skipping audio session deactivation - conditions not met")
             }
         }
     }
