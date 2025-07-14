@@ -6,7 +6,7 @@ import AVFoundation
     private var enablePositionUpdates: Bool
     private var positionUpdateInterval: TimeInterval
     private weak var delegate: NativeAudio?
-    private var timer: Timer?
+    private var timer: DispatchSourceTimer?
 
     @objc public init(
         _ assetId: String,
@@ -24,11 +24,6 @@ import AVFoundation
         self.positionUpdateInterval = max(0.1, min(2.0, positionUpdateInterval))
         self.delegate = delegate
 
-        // print rate numberOfloops and volume  and positionUpdateInterval
-        print(
-            "AssetPlayer initialized with assetId: \(assetId), volume: \(volume), rate: \(rate), numberOfLoops: \(numberOfLoops), positionUpdateInterval: \(positionUpdateInterval)"
-        )
-
         super.init()
 
         self.player.enableRate = true
@@ -44,6 +39,7 @@ import AVFoundation
         self.player.stop()
         self.stopPositionUpdates()
         self.delegate?.onAssetUnloaded(self.assetId)
+        self.delegate = nil
     }
 
     @objc public var isPlaying: Bool {
@@ -139,29 +135,31 @@ import AVFoundation
     }
 
     private func startPositionUpdates() {
-        self.timer?.invalidate()
+        self.timer?.cancel()
+        self.timer = nil
 
         guard self.enablePositionUpdates else { return }
 
-        DispatchQueue.main.async { [weak self] in
-            guard
-                let self = self
-            else { return }
-            self.timer = Timer.scheduledTimer(
-                withTimeInterval: self.positionUpdateInterval, repeats: true
-            ) {
-                [weak self] _ in
-                guard
-                    let self = self,
-                    self.isPlaying
-                else { return }
+        let queue = DispatchQueue.global(qos: .background)
+        self.timer = DispatchSource.makeTimerSource(queue: queue)
+
+        self.timer?.schedule(
+            deadline: .now(),
+            repeating: .milliseconds(Int(self.positionUpdateInterval * 1000))
+        )
+
+        self.timer?.setEventHandler { [weak self] in
+            guard let self = self, self.isPlaying else { return }
+            DispatchQueue.main.async {
                 self.delegate?.onAssetPositionUpdated(self.assetId, currentTime: self.currentTime)
             }
         }
+
+        self.timer?.resume()
     }
 
     private func stopPositionUpdates() {
-        self.timer?.invalidate()
+        self.timer?.cancel()
         self.timer = nil
     }
 
