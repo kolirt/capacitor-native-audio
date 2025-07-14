@@ -242,7 +242,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.resumeAsset(assetId)
+            let result = try self.implementation.playAsset(assetId)
             call.resolve(result)
         } catch {
             call.reject("Failed to resume audio: \(error.localizedDescription)")
@@ -353,7 +353,8 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetEnablePositionUpdates(assetId, enabled: enabled)
+            let result = try self.implementation.setAssetEnablePositionUpdates(
+                assetId, enabled: enabled)
             call.resolve(result)
         } catch {
             call.reject("Failed to set enablePositionUpdates: \(error.localizedDescription)")
@@ -369,7 +370,8 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetPositionUpdateInterval(assetId, interval: interval)
+            let result = try self.implementation.setAssetPositionUpdateInterval(
+                assetId, interval: interval)
             call.resolve(result)
         } catch {
             call.reject("Failed to set positionUpdateInterval: \(error.localizedDescription)")

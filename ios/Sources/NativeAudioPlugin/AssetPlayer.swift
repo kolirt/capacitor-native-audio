@@ -31,6 +31,7 @@ import AVFoundation
         self.player.rate = max(0.5, min(2.0, rate))
         self.player.numberOfLoops = numberOfLoops
         self.player.prepareToPlay()
+        self.player.delegate = self
 
         self.delegate?.onAssetLoaded(assetId, duration: self.player.duration)
     }
@@ -39,7 +40,7 @@ import AVFoundation
         self.player.stop()
         self.stopPositionUpdates()
         self.delegate?.onAssetUnloaded(self.assetId)
-        self.delegate = nil
+        self.player.delegate = nil
     }
 
     @objc public var isPlaying: Bool {
@@ -149,9 +150,14 @@ import AVFoundation
         )
 
         self.timer?.setEventHandler { [weak self] in
-            guard let self = self, self.isPlaying else { return }
+            guard
+                let self = self,
+                self.isPlaying,
+                let delegate = self.delegate
+            else { return }
+
             DispatchQueue.main.async {
-                self.delegate?.onAssetPositionUpdated(self.assetId, currentTime: self.currentTime)
+                delegate.onAssetPositionUpdated(self.assetId, currentTime: self.currentTime)
             }
         }
 
@@ -166,14 +172,23 @@ import AVFoundation
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         self.stopPositionUpdates()
 
+        guard
+            let delegate = self.delegate
+        else { return }
+
         if flag {
-            self.delegate?.onAssetCompleted(self.assetId)
+            delegate.onAssetCompleted(self.assetId)
         }
     }
 
     public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
         self.stopPositionUpdates()
-        self.delegate?.onAssetError(
+
+        guard
+            let delegate = self.delegate
+        else { return }
+
+        delegate.onAssetError(
             self.assetId,
             error: error?.localizedDescription ?? "Unknown error"
         )

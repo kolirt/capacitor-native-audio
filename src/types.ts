@@ -87,6 +87,15 @@ export interface PlayAssetResponse {
   isPlaying: boolean;
 }
 
+export interface ResumeAssetOptions {
+  assetId: string;
+}
+
+export interface ResumeAssetResponse {
+  assetId: string;
+  isPlaying: boolean;
+}
+
 export interface PauseAssetOptions {
   assetId: string;
 }

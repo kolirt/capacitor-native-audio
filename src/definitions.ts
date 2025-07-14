@@ -41,6 +41,8 @@ import type {
   AssetCompletedEvent,
   AssetErrorEvent,
   AssetPositionUpdateEvent,
+  ResumeAssetOptions,
+  ResumeAssetResponse,
 } from './types';
 
 interface NativeAudioPlugin {
@@ -57,14 +59,19 @@ interface NativeAudioPlugin {
   unloadAsset(options: UnloadAssetOptions): Promise<UnloadAssetResponse>;
   getAssetState(options: GetAssetStateOptions): Promise<GetAssetStateResponse>;
   playAsset(options: PlayAssetOptions): Promise<PlayAssetResponse>;
+  resumeAsset(options: ResumeAssetOptions): Promise<ResumeAssetResponse>;
   pauseAsset(options: PauseAssetOptions): Promise<PauseAssetResponse>;
   stopAsset(options: StopAssetOptions): Promise<StopAssetResponse>;
   seekAsset(options: SeekAssetOptions): Promise<SeekAssetResponse>;
   setAssetVolume(options: SetAssetVolumeOptions): Promise<SetAssetVolumeResponse>;
   setAssetRate(options: SetAssetRateOptions): Promise<SetAssetRateResponse>;
   setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions): Promise<SetAssetNumberOfLoopsResponse>;
-  setAssetEnablePositionUpdates(options: SetAssetEnablePositionUpdatesOptions): Promise<SetAssetEnablePositionUpdatesResponse>;
-  setAssetPositionUpdateInterval(options: SetAssetPositionUpdateIntervalOptions): Promise<SetAssetPositionUpdateIntervalResponse>;
+  setAssetEnablePositionUpdates(
+    options: SetAssetEnablePositionUpdatesOptions,
+  ): Promise<SetAssetEnablePositionUpdatesResponse>;
+  setAssetPositionUpdateInterval(
+    options: SetAssetPositionUpdateIntervalOptions,
+  ): Promise<SetAssetPositionUpdateIntervalResponse>;
 
   /**
    * Event Listeners

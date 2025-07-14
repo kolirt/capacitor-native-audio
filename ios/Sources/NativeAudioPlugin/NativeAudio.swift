@@ -9,6 +9,11 @@ import AVFoundation
     private var pausedByInterruptionAssetIds: [String] = []
     private var temporaryFileURLs: [String: URL] = [:]
 
+    private let queue = DispatchQueue(
+        label: "com.kolirt.plugins.native_audio.queue",
+        attributes: .concurrent
+    )
+
     @objc public var isAutoInterruptionHandlingEnabled: Bool {
         return self.enableAutoInterruptionHandling
     }
@@ -25,11 +30,15 @@ import AVFoundation
         iosOptions: [String]?
     ) throws {
         if let enableAutoInterruptionHandlingBool = enableAutoInterruptionHandling?.boolValue {
-            self.enableAutoInterruptionHandling = enableAutoInterruptionHandlingBool
+            self.queue.async(flags: .barrier) {
+                self.enableAutoInterruptionHandling = enableAutoInterruptionHandlingBool
+            }
         }
 
         if let enableAutoIosSessionDeactivationBool = enableAutoIosSessionDeactivation?.boolValue {
-            self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
+            self.queue.async(flags: .barrier) {
+                self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
+            }
         }
 
         if iosCategory != nil || iosMode != nil || iosOptions != nil {
@@ -106,25 +115,31 @@ import AVFoundation
     }
 
     @objc public func pauseAllAssetsForInterruption() -> [String] {
-        self.pausedByInterruptionAssetIds.removeAll()
-        for (assetId, assetPlayer) in assetPlayers {
-            if assetPlayer.isPlaying {
-                let _ = assetPlayer.pause()
-                self.pausedByInterruptionAssetIds.append(assetId)
+        var pausedIds: [String] = []
+        self.queue.sync {
+            self.pausedByInterruptionAssetIds.removeAll()
+            for (assetId, assetPlayer) in self.assetPlayers {
+                if assetPlayer.isPlaying {
+                    let _ = assetPlayer.pause()
+                    self.pausedByInterruptionAssetIds.append(assetId)
+                }
             }
+            pausedIds = self.pausedByInterruptionAssetIds
         }
-        return self.pausedByInterruptionAssetIds
+        return pausedIds
     }
 
     @objc public func resumeAllAssetsAfterInterruption() -> [String] {
         var resumedIds: [String] = []
-        for assetId in self.pausedByInterruptionAssetIds {
-            if let assetPlayer = assetPlayers[assetId] {
-                let _ = assetPlayer.play()
-                resumedIds.append(assetId)
+        self.queue.sync {
+            for assetId in self.pausedByInterruptionAssetIds {
+                if let assetPlayer = self.assetPlayers[assetId] {
+                    let _ = assetPlayer.play()
+                    resumedIds.append(assetId)
+                }
             }
+            self.pausedByInterruptionAssetIds.removeAll()
         }
-        self.pausedByInterruptionAssetIds.removeAll()
         return resumedIds
     }
 
@@ -133,7 +148,10 @@ import AVFoundation
      */
 
     @objc public func getAssets() throws -> [String: Any] {
-        let assetIds = Array(self.assetPlayers.keys)
+        var assetIds: [String] = []
+        self.queue.sync {
+            assetIds = Array(self.assetPlayers.keys)
+        }
         return ["assets": assetIds]
     }
 
@@ -146,9 +164,7 @@ import AVFoundation
         enablePositionUpdates: NSNumber?,
         positionUpdateInterval: NSNumber?
     ) async throws -> [String: Any] {
-        if let _ = self.assetPlayers[assetId] {
-            self.assetPlayers.removeValue(forKey: assetId)
-        }
+        self.removeAssetPlayer(assetId)
 
         let url = try await resolveURL(source: source, assetId: assetId)
 
@@ -159,45 +175,27 @@ import AVFoundation
             rate: rate?.floatValue ?? 1.0,
             numberOfLoops: numberOfLoops?.intValue ?? 0,
             enablePositionUpdates: enablePositionUpdates?.boolValue ?? false,
-            positionUpdateInterval: positionUpdateInterval?.doubleValue ?? 0.25,
+            positionUpdateInterval: positionUpdateInterval?.doubleValue ?? 0.5,
             delegate: self
         )
 
-        self.assetPlayers[assetId] = assetPlayer
+        self.addAssetPlayer(assetId, player: assetPlayer)
 
-        let result: [String: Any] = ["assetId": assetId, "duration": assetPlayer.duration]
-        return result
+        return ["assetId": assetId, "duration": assetPlayer.duration]
     }
 
     @objc public func unloadAsset(_ assetId: String) throws -> [String: Any] {
-        guard
-            let _ = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
-        self.assetPlayers.removeValue(forKey: assetId)
+        let _ = try self.getAssetPlayer(assetId)
 
-        if let tempURL = self.temporaryFileURLs[assetId] {
-            try FileManager.default.removeItem(at: tempURL)
-            self.temporaryFileURLs.removeValue(forKey: assetId)
-        }
-
+        self.removeAssetPlayer(assetId)
+        self.cleanupTemporaryFile(for: assetId)
         self.manageSessionActivation(isActivating: false)
+
         return ["assetId": assetId]
     }
 
     @objc public func getAssetState(_ assetId: String) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
         return [
             "assetId": assetId,
             "isPlaying": assetPlayer.isPlaying,
@@ -207,33 +205,13 @@ import AVFoundation
     }
 
     @objc public func playAsset(_ assetId: String) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
-
+        let assetPlayer = try self.getAssetPlayer(assetId)
         self.manageSessionActivation(isActivating: true)
-
         return ["assetId": assetId, "isPlaying": assetPlayer.play()]
     }
 
-    @objc public func resumeAsset(_ assetId: String) throws -> [String: Any] {
-        return try playAsset(assetId)
-    }
-
     @objc public func pauseAsset(_ assetId: String) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
 
         let result: [String: Any] = ["assetId": assetId, "isPlaying": assetPlayer.pause()]
 
@@ -243,14 +221,7 @@ import AVFoundation
     }
 
     @objc public func stopAsset(_ assetId: String) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
 
         let result: [String: Any] = ["assetId": assetId, "isPlaying": assetPlayer.stop()]
 
@@ -260,77 +231,45 @@ import AVFoundation
     }
 
     @objc public func seekAsset(_ assetId: String, time: TimeInterval) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
         return ["assetId": assetId, "currentTime": assetPlayer.seek(to: time)]
     }
 
     @objc public func setAssetVolume(_ assetId: String, volume: Float) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
         return ["assetId": assetId, "volume": assetPlayer.setVolume(volume)]
     }
 
     @objc public func setAssetRate(_ assetId: String, rate: Float) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
         return ["assetId": assetId, "rate": assetPlayer.setRate(rate)]
     }
 
     @objc public func setAssetNumberOfLoops(_ assetId: String, numberOfLoops: Int) throws
         -> [String: Any]
     {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
+        let assetPlayer = try self.getAssetPlayer(assetId)
         return ["assetId": assetId, "numberOfLoops": assetPlayer.setNumberOfLoops(numberOfLoops)]
     }
 
-    @objc public func setAssetEnablePositionUpdates(_ assetId: String, enabled: Bool) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
-        return ["assetId": assetId, "enablePositionUpdates": assetPlayer.setEnablePositionUpdates(enabled)]
+    @objc public func setAssetEnablePositionUpdates(_ assetId: String, enabled: Bool) throws
+        -> [String: Any]
+    {
+        let assetPlayer = try self.getAssetPlayer(assetId)
+        return [
+            "assetId": assetId,
+            "enablePositionUpdates": assetPlayer.setEnablePositionUpdates(enabled),
+        ]
     }
 
-    @objc public func setAssetPositionUpdateInterval(_ assetId: String, interval: TimeInterval) throws -> [String: Any] {
-        guard
-            let assetPlayer = self.assetPlayers[assetId]
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
-            )
-        }
-        return ["assetId": assetId, "positionUpdateInterval": assetPlayer.setPositionUpdateInterval(interval)]
+    @objc public func setAssetPositionUpdateInterval(_ assetId: String, interval: TimeInterval)
+        throws -> [String: Any]
+    {
+        let assetPlayer = try self.getAssetPlayer(assetId)
+        return [
+            "assetId": assetId,
+            "positionUpdateInterval": assetPlayer.setPositionUpdateInterval(interval),
+        ]
     }
 
     /**
@@ -416,6 +355,36 @@ import AVFoundation
      * Private methods
      */
 
+    private func getAssetPlayer(_ assetId: String) throws -> AssetPlayer {
+        var player: AssetPlayer?
+        self.queue.sync {
+            player = self.assetPlayers[assetId]
+        }
+        guard
+            let assetPlayer = player
+        else {
+            throw NSError(
+                domain: "NativeAudio", code: -3,
+                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
+            )
+        }
+        return assetPlayer
+    }
+
+    private func addAssetPlayer(_ assetId: String, player: AssetPlayer) {
+        self.queue.async(flags: .barrier) {
+            self.assetPlayers[assetId] = player
+        }
+    }
+
+    private func removeAssetPlayer(_ assetId: String) {
+        self.queue.async(flags: .barrier) {
+            if let _ = self.assetPlayers[assetId] {
+                self.assetPlayers.removeValue(forKey: assetId)
+            }
+        }
+    }
+
     private func manageSessionActivation(isActivating: Bool) {
         let audioSession = AVAudioSession.sharedInstance()
 
@@ -425,7 +394,10 @@ import AVFoundation
             } catch {
             }
         } else {
-            let allStopped = assetPlayers.values.allSatisfy { !$0.isPlaying }
+            var allStopped = true
+            self.queue.sync {
+                allStopped = self.assetPlayers.values.allSatisfy { !$0.isPlaying }
+            }
 
             if allStopped && self.enableAutoIosSessionDeactivation {
                 do {
@@ -437,15 +409,42 @@ import AVFoundation
     }
 
     private func cleanupTemporaryFiles() {
-        for (assetId, url) in self.temporaryFileURLs {
-            do {
-                try FileManager.default.removeItem(at: url)
-                print("Cleaned up temporary file for assetId: \(assetId)")
-            } catch {
-                print("Failed to clean up temporary file: \(error.localizedDescription)")
-            }
+        var assetIds: [String] = []
+        self.queue.sync {
+            assetIds = Array(self.temporaryFileURLs.keys)
         }
-        self.temporaryFileURLs.removeAll()
+
+        for assetId in assetIds {
+            self.cleanupTemporaryFile(for: assetId)
+        }
+
+        self.queue.async(flags: .barrier) {
+            self.temporaryFileURLs.removeAll()
+        }
+    }
+
+    private func getTemporaryFileURL(for assetId: String) -> URL? {
+        var tempURL: URL?
+        self.queue.sync {
+            tempURL = self.temporaryFileURLs[assetId]
+        }
+        return tempURL
+    }
+
+    private func cleanupTemporaryFile(for assetId: String) {
+        guard
+            let url = self.getTemporaryFileURL(for: assetId)
+        else { return }
+
+        do {
+            if FileManager.default.fileExists(atPath: url.path) {
+                try FileManager.default.removeItem(at: url)
+            }
+            self.queue.async(flags: .barrier) {
+                self.temporaryFileURLs.removeValue(forKey: assetId)
+            }
+        } catch {
+        }
     }
 
     private func resolveURL(source: String, assetId: String) async throws -> URL {
@@ -460,7 +459,7 @@ import AVFoundation
                 )
             }
 
-            if let existingURL = self.temporaryFileURLs[assetId] {
+            if let existingURL = self.getTemporaryFileURL(for: assetId) {
                 if FileManager.default.fileExists(atPath: existingURL.path) {
                     print("Using cached temporary file for assetId: \(assetId)")
                     return existingURL
@@ -475,10 +474,16 @@ import AVFoundation
             let fileExtension = sourceExtension.isEmpty ? "m4a" : sourceExtension
             let tempFile = tempDir.appendingPathComponent("\(assetId).\(fileExtension)")
 
+            if FileManager.default.fileExists(atPath: tempFile.path) {
+                try? FileManager.default.removeItem(at: tempFile)
+            }
+
             try data.write(to: tempFile)
             url = tempFile
 
-            self.temporaryFileURLs[assetId] = url
+            self.queue.async(flags: .barrier) {
+                self.temporaryFileURLs[assetId] = url
+            }
         } else {
             let fileManager = FileManager.default
             let sourceWithoutExtension = (source as NSString).deletingPathExtension

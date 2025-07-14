@@ -21,6 +21,7 @@ npx cap sync
 * [`unloadAsset(...)`](#unloadasset)
 * [`getAssetState(...)`](#getassetstate)
 * [`playAsset(...)`](#playasset)
+* [`resumeAsset(...)`](#resumeasset)
 * [`pauseAsset(...)`](#pauseasset)
 * [`stopAsset(...)`](#stopasset)
 * [`seekAsset(...)`](#seekasset)
@@ -154,6 +155,21 @@ playAsset(options: PlayAssetOptions) => Promise<PlayAssetResponse>
 | **`options`** | <code><a href="#playassetoptions">PlayAssetOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#playassetresponse">PlayAssetResponse</a>&gt;</code>
+
+--------------------
+
+
+### resumeAsset(...)
+
+```typescript
+resumeAsset(options: ResumeAssetOptions) => Promise<ResumeAssetResponse>
+```
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#resumeassetoptions">ResumeAssetOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#resumeassetresponse">ResumeAssetResponse</a>&gt;</code>
 
 --------------------
 
@@ -556,6 +572,21 @@ Asset
 
 
 #### PlayAssetOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`assetId`** | <code>string</code> |
+
+
+#### ResumeAssetResponse
+
+| Prop            | Type                 |
+| --------------- | -------------------- |
+| **`assetId`**   | <code>string</code>  |
+| **`isPlaying`** | <code>boolean</code> |
+
+
+#### ResumeAssetOptions
 
 | Prop          | Type                |
 | ------------- | ------------------- |
