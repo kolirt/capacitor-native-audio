@@ -29,12 +29,10 @@ import AVFoundation
         self.player.numberOfLoops = numberOfLoops
         self.player.prepareToPlay()
 
-        print("AssetPlayer initialized for assetId: \(self.assetId)")
         self.delegate?.onAssetLoaded(assetId, duration: self.player.duration)
     }
 
     deinit {
-        print("AssetPlayer deinitialized for assetId: \(self.assetId)")
         self.player.stop()
         self.stopPositionUpdates()
         self.delegate?.onAssetUnloaded(self.assetId)
@@ -53,8 +51,8 @@ import AVFoundation
     }
 
     @objc public func play() -> Bool {
-        print("Play for assetId: \(self.assetId)")
         if !self.isPlaying {
+
             if self.player.play() {
                 self.startPositionUpdates()
                 self.delegate?.onAssetStarted(self.assetId)
@@ -65,11 +63,9 @@ import AVFoundation
     }
 
     @objc public func pause() -> Bool {
-        print("Pause for assetId: \(self.assetId)")
-
         if self.isPlaying {
             self.player.pause()
-            stopPositionUpdates()
+            self.stopPositionUpdates()
             self.delegate?.onAssetPaused(self.assetId)
         }
 
@@ -77,13 +73,13 @@ import AVFoundation
     }
 
     @objc public func stop() -> Bool {
-        print("Stop for assetId: \(self.assetId)")
-
         if self.isPlaying {
             self.player.stop()
             self.player.currentTime = 0
-            stopPositionUpdates()
+            self.stopPositionUpdates()
             self.delegate?.onAssetStopped(self.assetId)
+        } else {
+            self.player.currentTime = 0
         }
 
         return self.isPlaying
@@ -111,13 +107,13 @@ import AVFoundation
     }
 
     private func startPositionUpdates() {
-        print("Starting position updates for assetId: \(self.assetId)")
         self.timer?.invalidate()
         DispatchQueue.main.async { [weak self] in
             guard
                 let self = self
             else { return }
-            self.timer = Timer.scheduledTimer(withTimeInterval: self.updateInterval, repeats: true) {
+            self.timer = Timer.scheduledTimer(withTimeInterval: self.updateInterval, repeats: true)
+            {
                 [weak self] _ in
                 guard
                     let self = self,
@@ -129,20 +125,20 @@ import AVFoundation
     }
 
     private func stopPositionUpdates() {
-        print("Stopping position updates for assetId: \(self.assetId)")
         self.timer?.invalidate()
         self.timer = nil
     }
 
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        stopPositionUpdates()
+        self.stopPositionUpdates()
+
         if flag {
             self.delegate?.onAssetCompleted(self.assetId)
         }
     }
 
     public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        stopPositionUpdates()
+        self.stopPositionUpdates()
         self.delegate?.onAssetError(
             self.assetId,
             error: error?.localizedDescription ?? "Unknown error"

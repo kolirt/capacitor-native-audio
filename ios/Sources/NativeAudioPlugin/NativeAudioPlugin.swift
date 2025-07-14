@@ -102,21 +102,33 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc func configureSession(_ call: CAPPluginCall) {
-        let enableAutoInterruptionHandling = call.getBool("enableAutoInterruptionHandling") ?? true
-        let enableAutoIosSessionActivation = call.getBool("enableAutoIosSessionActivation") ?? true
+        let enableAutoInterruptionHandlingBool = call.getBool("enableAutoInterruptionHandling")
+        let enableAutoIosSessionDeactivationBool = call.getBool("enableAutoIosSessionDeactivation")
+        let positionUpdateIntervalBool = call.getDouble("positionUpdateInterval")
         let iosCategory = call.getString("iosCategory")
         let iosMode = call.getString("iosMode")
         let iosOptions = call.getArray("iosOptions", String.self)
 
+        let enableAutoInterruptionHandling: NSNumber? = enableAutoInterruptionHandlingBool.map {
+            NSNumber(booleanLiteral: $0)
+        }
+        let enableAutoIosSessionDeactivation: NSNumber? = enableAutoIosSessionDeactivationBool.map {
+            NSNumber(booleanLiteral: $0)
+        }
+        let positionUpdateInterval: NSNumber? = positionUpdateIntervalBool.map {
+            NSNumber(value: $0)
+        }
+
         do {
-            let result = try self.implementation.configureSession(
+            try self.implementation.configureSession(
                 enableAutoInterruptionHandling: enableAutoInterruptionHandling,
-                enableAutoIosSessionActivation: enableAutoIosSessionActivation,
+                enableAutoIosSessionDeactivation: enableAutoIosSessionDeactivation,
+                positionUpdateInterval: positionUpdateInterval,
                 iosCategory: iosCategory,
                 iosMode: iosMode,
                 iosOptions: iosOptions
             )
-            call.resolve(result)
+            call.resolve()
         } catch {
             call.reject("Failed to configure session: \(error.localizedDescription)")
         }
@@ -337,6 +349,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let assetId = userInfo["assetId"] as? String,
             let duration = userInfo["duration"] as? TimeInterval
         else { return }
+
         notifyListeners(
             "assetLoaded",
             data: ["eventName": eventName, "assetId": assetId, "duration": duration]
@@ -349,6 +362,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let eventName = userInfo["eventName"] as? String,
             let assetId = userInfo["assetId"] as? String
         else { return }
+
         notifyListeners(
             "assetUnloaded",
             data: ["eventName": eventName, "assetId": assetId]
@@ -361,6 +375,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let eventName = userInfo["eventName"] as? String,
             let assetId = userInfo["assetId"] as? String
         else { return }
+
         notifyListeners(
             "assetStarted",
             data: ["eventName": eventName, "assetId": assetId]
@@ -373,6 +388,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let eventName = userInfo["eventName"] as? String,
             let assetId = userInfo["assetId"] as? String
         else { return }
+
         notifyListeners(
             "assetPaused",
             data: ["eventName": eventName, "assetId": assetId]
@@ -385,6 +401,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let eventName = userInfo["eventName"] as? String,
             let assetId = userInfo["assetId"] as? String
         else { return }
+
         notifyListeners(
             "assetStopped",
             data: ["eventName": eventName, "assetId": assetId]
@@ -398,6 +415,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let assetId = userInfo["assetId"] as? String,
             let currentTime = userInfo["currentTime"] as? TimeInterval
         else { return }
+
         notifyListeners(
             "assetSeeked",
             data: ["eventName": eventName, "assetId": assetId, "currentTime": currentTime]
@@ -410,6 +428,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let eventName = userInfo["eventName"] as? String,
             let assetId = userInfo["assetId"] as? String
         else { return }
+
         notifyListeners(
             "assetCompleted",
             data: ["eventName": eventName, "assetId": assetId]
@@ -423,6 +442,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let assetId = userInfo["assetId"] as? String,
             let error = userInfo["error"] as? String
         else { return }
+
         notifyListeners(
             "assetError",
             data: ["eventName": eventName, "assetId": assetId, "error": error]
@@ -436,6 +456,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             let assetId = userInfo["assetId"] as? String,
             let currentTime = userInfo["currentTime"] as? TimeInterval
         else { return }
+
         notifyListeners(
             "assetPositionUpdate",
             data: ["eventName": eventName, "assetId": assetId, "currentTime": currentTime]
@@ -461,14 +482,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             ]
         )
 
-        if self.implementation.enableAutoInterruptionHandling {
+        if self.implementation.isAutoInterruptionHandlingEnabled {
             if type == .began {
-                self.implementation.pauseAllAssetsForInterruption()
+                let _ = self.implementation.pauseAllAssetsForInterruption()
             } else if type == .ended {
                 if let options = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt,
                     AVAudioSession.InterruptionOptions(rawValue: options).contains(.shouldResume)
                 {
-                    self.implementation.resumeAllAssetsAfterInterruption()
+                    let _ = self.implementation.resumeAllAssetsAfterInterruption()
                 }
             }
         }

@@ -49,14 +49,14 @@ npx cap sync
 ### configureSession(...)
 
 ```typescript
-configureSession(options: ConfigureSessionOptions) => Promise<ConfigureSessionResponse>
+configureSession(options: ConfigureSessionOptions) => Promise<null>
 ```
 
 | Param         | Type                                                                        |
 | ------------- | --------------------------------------------------------------------------- |
 | **`options`** | <code><a href="#configuresessionoptions">ConfigureSessionOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#configuresessionresponse">ConfigureSessionResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;null&gt;</code>
 
 --------------------
 
@@ -429,25 +429,16 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 ### Interfaces
 
 
-#### ConfigureSessionResponse
-
-| Prop                     | Type                                                                      |
-| ------------------------ | ------------------------------------------------------------------------- |
-| **`enableAutoHandling`** | <code>boolean</code>                                                      |
-| **`iosCategory`**        | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> |
-| **`iosMode`**            | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         |
-| **`iosOptions`**         | <code>AVAudioSessionCategoryOptions[]</code>                              |
-
-
 #### ConfigureSessionOptions
 
-| Prop                                 | Type                  |
-| ------------------------------------ | --------------------- |
-| **`enableAutoInterruptionHandling`** | <code>boolean</code>  |
-| **`enableAutoIosSessionActivation`** | <code>boolean</code>  |
-| **`iosCategory`**                    | <code>string</code>   |
-| **`iosMode`**                        | <code>string</code>   |
-| **`iosOptions`**                     | <code>string[]</code> |
+| Prop                                   | Type                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------- |
+| **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      |
+| **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      |
+| **`positionUpdateInterval`**           | <code>number</code>                                                       |
+| **`iosCategory`**                      | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> |
+| **`iosMode`**                          | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         |
+| **`iosOptions`**                       | <code>AVAudioSessionCategoryOptions[]</code>                              |
 
 
 #### PauseAllAssetsResponse

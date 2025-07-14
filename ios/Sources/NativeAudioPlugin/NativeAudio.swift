@@ -3,93 +3,119 @@ import AVFoundation
 
 @objc public class NativeAudio: NSObject {
     private var enableAutoInterruptionHandling = true
-    private var enableAutoIosSessionActivation = false
+    private var enableAutoIosSessionDeactivation = true
     private var positionUpdateInterval: TimeInterval = 0.25
 
     private var assetPlayers: [String: AssetPlayer] = [:]
     private var pausedByInterruptionAssetIds: [String] = []
     private var temporaryFileURLs: [String: URL] = [:]
 
+    @objc public var isAutoInterruptionHandlingEnabled: Bool {
+        return self.enableAutoInterruptionHandling
+    }
+
     deinit {
         cleanupTemporaryFiles()
     }
 
     @objc public func configureSession(
-        enableAutoInterruptionHandling: Bool,
-        enableAutoIosSessionActivation: Bool,
-        positionUpdateInterval: TimeInterval?,
+        enableAutoInterruptionHandling: NSNumber?,
+        enableAutoIosSessionDeactivation: NSNumber?,
+        positionUpdateInterval: NSNumber?,
         iosCategory: String?,
         iosMode: String?,
         iosOptions: [String]?
-    ) throws -> [String: Any] {
-        self.enableAutoInterruptionHandling = enableAutoInterruptionHandling
-        self.enableAutoIosSessionActivation = enableAutoIosSessionActivation
-
-        if let interval = positionUpdateInterval {
-            self.positionUpdateInterval = max(0.1, min(2.0, interval))
+    ) throws {
+        if let enableAutoInterruptionHandlingBool = enableAutoInterruptionHandling?.boolValue {
+            self.enableAutoInterruptionHandling = enableAutoInterruptionHandlingBool
         }
 
-        let audioSession = AVAudioSession.sharedInstance()
-
-        let categoryStr = iosCategory ?? "ambient"
-        guard
-            let avCategory = AVAudioSession.Category(rawValue: categoryStr)
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -4,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid iOS category"]
-            )
+        if let enableAutoIosSessionDeactivationBool = enableAutoIosSessionDeactivation?.boolValue {
+            self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
         }
 
-        let modeStr = iosMode ?? "default"
-        guard
-            let avMode = AVAudioSession.Mode(rawValue: modeStr)
-        else {
-            throw NSError(
-                domain: "NativeAudio", code: -5,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid iOS mode"]
-            )
+        if let positionUpdateIntervalValue = positionUpdateInterval?.doubleValue {
+            self.positionUpdateInterval = max(0.1, min(2.0, positionUpdateIntervalValue))
         }
 
-        var avOptions: AVAudioSession.CategoryOptions = []
-        if let options = iosOptions {
-            for option in options {
-                switch option {
-                case "mixWithOthers": avOptions.insert(.mixWithOthers)
-                case "duckOthers": avOptions.insert(.duckOthers)
-                case "interruptSpokenAudioAndMixWithOthers":
-                    avOptions.insert(.interruptSpokenAudioAndMixWithOthers)
-                case "allowBluetoothA2DP": avOptions.insert(.allowBluetoothA2DP)
-                case "allowAirPlay": avOptions.insert(.allowAirPlay)
-                case "defaultToSpeaker": avOptions.insert(.defaultToSpeaker)
-                case "overrideMutedMicrophoneInterruption":
-                    avOptions.insert(.overrideMutedMicrophoneInterruption)
-                default:
-                    throw NSError(
-                        domain: "NativeAudio", code: -6,
-                        userInfo: [NSLocalizedDescriptionKey: "Invalid iOS option: \(option)"]
-                    )
+        if iosCategory != nil || iosMode != nil || iosOptions != nil {
+            let audioSession = AVAudioSession.sharedInstance()
+
+            let categoryRaw = iosCategory ?? "ambient"
+            let validCategoryMap: [String: AVAudioSession.Category] = [
+                "ambient": .ambient,
+                "multiRoute": .multiRoute,
+                "playAndRecord": .playAndRecord,
+                "playback": .playback,
+                "record": .record,
+                "soloAmbient": .soloAmbient,
+            ]
+
+            guard let avCategory = validCategoryMap[categoryRaw] else {
+                throw NSError(
+                    domain: "NativeAudio", code: -4,
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid iOS category: \(categoryRaw)"]
+                )
+            }
+
+            let modeRaw = iosMode ?? "default"
+            let validModeMap: [String: AVAudioSession.Mode] = [
+                "default": .default,
+                "gameChat": .gameChat,
+                "measurement": .measurement,
+                "moviePlayback": .moviePlayback,
+                "spokenAudio": .spokenAudio,
+                "videoChat": .videoChat,
+                "videoRecording": .videoRecording,
+                "voiceChat": .voiceChat,
+                "voicePrompt": .voicePrompt,
+            ]
+
+            guard let avMode = validModeMap[modeRaw] else {
+                throw NSError(
+                    domain: "NativeAudio", code: -5,
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid iOS mode: \(modeRaw)"]
+                )
+            }
+
+            var avOptions: AVAudioSession.CategoryOptions = []
+            if let optionsRaw = iosOptions {
+                var validOptionMap: [String: AVAudioSession.CategoryOptions] = [
+                    "mixWithOthers": .mixWithOthers,
+                    "duckOthers": .duckOthers,
+                    "interruptSpokenAudioAndMixWithOthers": .interruptSpokenAudioAndMixWithOthers,
+                    "allowBluetoothA2DP": .allowBluetoothA2DP,
+                    "allowAirPlay": .allowAirPlay,
+                    "defaultToSpeaker": .defaultToSpeaker,
+                ]
+
+                // Add iOS 14.5+ specific option if available
+                if #available(iOS 14.5, *) {
+                    validOptionMap["overrideMutedMicrophoneInterruption"] =
+                        .overrideMutedMicrophoneInterruption
+                }
+
+                for option in optionsRaw {
+                    if let categoryOption = validOptionMap[option] {
+                        avOptions.insert(categoryOption)
+                    } else {
+                        throw NSError(
+                            domain: "NativeAudio", code: -6,
+                            userInfo: [NSLocalizedDescriptionKey: "Invalid iOS option: \(option)"]
+                        )
+                    }
                 }
             }
+
+            try audioSession.setCategory(avCategory, mode: avMode, options: avOptions)
         }
-
-        try audioSession.setCategory(avCategory, mode: avMode, options: avOptions)
-
-        return [
-            "enableAutoInterruptionHandling": self.enableAutoInterruptionHandling,
-            "enableAutoIosSessionActivation": self.enableAutoIosSessionActivation,
-            "positionUpdateInterval": self.positionUpdateInterval,
-            "iosCategory": categoryStr,
-            "iosMode": modeStr,
-            "iosOptions": iosOptions ?? [],
-        ]
     }
 
     @objc public func pauseAllAssetsForInterruption() -> [String] {
         self.pausedByInterruptionAssetIds.removeAll()
         for (assetId, assetPlayer) in assetPlayers {
             if assetPlayer.isPlaying {
-                assetPlayer.pause()
+                let _ = assetPlayer.pause()
                 self.pausedByInterruptionAssetIds.append(assetId)
             }
         }
@@ -100,7 +126,7 @@ import AVFoundation
         var resumedIds: [String] = []
         for assetId in self.pausedByInterruptionAssetIds {
             if let assetPlayer = assetPlayers[assetId] {
-                assetPlayer.play()
+                let _ = assetPlayer.play()
                 resumedIds.append(assetId)
             }
         }
@@ -124,7 +150,9 @@ import AVFoundation
         rate: Float,
         numberOfLoops: Int
     ) async throws -> [String: Any] {
-        self.assetPlayers.removeValue(forKey: assetId)
+        if let _ = self.assetPlayers[assetId] {
+            self.assetPlayers.removeValue(forKey: assetId)
+        }
 
         let url = try await resolveURL(source: source, assetId: assetId)
 
@@ -137,9 +165,11 @@ import AVFoundation
             updateInterval: self.positionUpdateInterval,
             delegate: self
         )
+
         self.assetPlayers[assetId] = assetPlayer
 
-        return ["assetId": assetId, "duration": assetPlayer.duration]
+        let result: [String: Any] = ["assetId": assetId, "duration": assetPlayer.duration]
+        return result
     }
 
     @objc public func unloadAsset(_ assetId: String) throws -> [String: Any] {
@@ -154,12 +184,7 @@ import AVFoundation
         self.assetPlayers.removeValue(forKey: assetId)
 
         if let tempURL = self.temporaryFileURLs[assetId] {
-            do {
-                try FileManager.default.removeItem(at: tempURL)
-                print("Removed temporary file for assetId: \(assetId)")
-            } catch {
-                print("Failed to remove temporary file: \(error.localizedDescription)")
-            }
+            try FileManager.default.removeItem(at: tempURL)
             self.temporaryFileURLs.removeValue(forKey: assetId)
         }
 
@@ -213,7 +238,7 @@ import AVFoundation
             )
         }
 
-        let result = ["assetId": assetId, "isPlaying": assetPlayer.pause()]
+        let result: [String: Any] = ["assetId": assetId, "isPlaying": assetPlayer.pause()]
 
         self.manageSessionActivation(isActivating: false)
 
@@ -230,7 +255,7 @@ import AVFoundation
             )
         }
 
-        let result = ["assetId": assetId, "isPlaying": assetPlayer.stop()]
+        let result: [String: Any] = ["assetId": assetId, "isPlaying": assetPlayer.stop()]
 
         self.manageSessionActivation(isActivating: false)
 
@@ -374,46 +399,24 @@ import AVFoundation
         let audioSession = AVAudioSession.sharedInstance()
 
         if isActivating {
-            print("manageSessionActivation: Attempting to activate session")
-
-            if self.enableAutoIosSessionActivation {
-                do {
-                    try audioSession.setActive(true)
-                    print("manageSessionActivation: Audio session activated successfully")
-                } catch {
-                    print(
-                        "manageSessionActivation: Failed to activate audio session: \(error.localizedDescription)"
-                    )
-                }
-            } else {
-                print(
-                    "manageSessionActivation: Auto activation disabled, skipping session activation"
-                )
+            do {
+                try audioSession.setActive(true)
+                print("NativeAudio: Audio session activated successfully")
+            } catch {
+                print("NativeAudio: Failed to activate audio session: \(error.localizedDescription)")
             }
         } else {
-            print("manageSessionActivation: Attempting to deactivate session")
             let allStopped = assetPlayers.values.allSatisfy { !$0.isPlaying }
-            print("manageSessionActivation: All players stopped: \(allStopped)")
 
-            if allStopped && !self.enableAutoIosSessionActivation {
+            if allStopped && self.enableAutoIosSessionDeactivation {
                 do {
                     try audioSession.setActive(false)
-                    print("manageSessionActivation: Audio session deactivated successfully")
+                    print("NativeAudio: Audio session deactivated successfully")
                 } catch {
-                    print(
-                        "manageSessionActivation: Failed to deactivate audio session: \(error.localizedDescription)"
-                    )
+                    print("NativeAudio: Failed to deactivate audio session: \(error.localizedDescription)")
                 }
             } else {
-                if !allStopped {
-                    print(
-                        "manageSessionActivation: Not all players stopped, keeping session active")
-                }
-                if self.enableAutoIosSessionActivation {
-                    print(
-                        "manageSessionActivation: Auto activation enabled, not deactivating session"
-                    )
-                }
+                print("NativeAudio: Skipping audio session deactivation - conditions not met")
             }
         }
     }

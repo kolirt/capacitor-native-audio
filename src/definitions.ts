@@ -2,7 +2,6 @@ import type { PluginListenerHandle } from '@capacitor/core';
 
 import type {
   ConfigureSessionOptions,
-  ConfigureSessionResponse,
   GetAssetsResponse,
   PauseAllAssetsResponse,
   PreloadAssetOptions,
@@ -41,7 +40,7 @@ import type {
 } from './types';
 
 interface NativeAudioPlugin {
-  configureSession(options: ConfigureSessionOptions): Promise<ConfigureSessionResponse>;
+  configureSession(options: ConfigureSessionOptions): Promise<null>;
   pauseAllAssets(): Promise<PauseAllAssetsResponse>;
   resumeAllAssets(): Promise<ResumeAllAssetsResponse>;
 
