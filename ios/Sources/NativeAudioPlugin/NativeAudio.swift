@@ -57,7 +57,7 @@ import AVFoundation
         }
 
         if let enableAutoIosSessionDeactivationBool = enableAutoIosSessionDeactivation?.boolValue {
-                self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
+            self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
         }
 
         if iosCategory != nil || iosMode != nil || iosOptions != nil {
