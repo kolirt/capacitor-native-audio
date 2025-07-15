@@ -522,7 +522,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             ]
         )
 
-        if self.implementation.isAutoInterruptionHandlingEnabled {
+        if self.implementation.enableAutoInterruptionHandling {
             if type == .began {
                 let _ = self.implementation.pauseAllAssetsForInterruption()
             } else if type == .ended {

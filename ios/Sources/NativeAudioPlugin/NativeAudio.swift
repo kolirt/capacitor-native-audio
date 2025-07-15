@@ -2,24 +2,47 @@ import Foundation
 import AVFoundation
 
 @objc public class NativeAudio: NSObject {
-    private var enableAutoInterruptionHandling = true
-    private var enableAutoIosSessionDeactivation = true
-
-    private var assetPlayers: [String: AssetPlayer] = [:]
-    private var pausedByInterruptionAssetIds: [String] = []
-    private var temporaryFileURLs: [String: URL] = [:]
-
+    private let audioSession = AVAudioSession.sharedInstance()
     private let queue = DispatchQueue(
         label: "com.kolirt.plugins.native_audio.queue",
         attributes: .concurrent
     )
 
-    @objc public var isAutoInterruptionHandlingEnabled: Bool {
-        return self.enableAutoInterruptionHandling
-    }
+    private var _enableAutoInterruptionHandling = true
+    private var _enableAutoIosSessionDeactivation = true
+
+    private var assetPlayers: [String: AssetPlayer] = [:]
+    private var pausedByInterruptionAssetIds: [String] = []
+    private var temporaryFileURLs: [String: URL] = [:]
 
     deinit {
         cleanupTemporaryFiles()
+    }
+
+    public var enableAutoInterruptionHandling: Bool {
+        get {
+            return queue.sync {
+                return self._enableAutoInterruptionHandling
+            }
+        }
+        set(newValue) {
+            queue.async(flags: .barrier) {
+                self._enableAutoInterruptionHandling = newValue
+            }
+        }
+    }
+
+    public var enableAutoIosSessionDeactivation: Bool {
+        get {
+            return queue.sync {
+                return self._enableAutoIosSessionDeactivation
+            }
+        }
+        set(newValue) {
+            queue.async(flags: .barrier) {
+                self._enableAutoIosSessionDeactivation = newValue
+            }
+        }
     }
 
     @objc public func configureSession(
@@ -30,20 +53,14 @@ import AVFoundation
         iosOptions: [String]?
     ) throws {
         if let enableAutoInterruptionHandlingBool = enableAutoInterruptionHandling?.boolValue {
-            self.queue.async(flags: .barrier) {
-                self.enableAutoInterruptionHandling = enableAutoInterruptionHandlingBool
-            }
+            self.enableAutoInterruptionHandling = enableAutoInterruptionHandlingBool
         }
 
         if let enableAutoIosSessionDeactivationBool = enableAutoIosSessionDeactivation?.boolValue {
-            self.queue.async(flags: .barrier) {
                 self.enableAutoIosSessionDeactivation = enableAutoIosSessionDeactivationBool
-            }
         }
 
         if iosCategory != nil || iosMode != nil || iosOptions != nil {
-            let audioSession = AVAudioSession.sharedInstance()
-
             let categoryRaw = iosCategory ?? "ambient"
             let validCategoryMap: [String: AVAudioSession.Category] = [
                 "ambient": .ambient,
@@ -110,7 +127,7 @@ import AVFoundation
                 }
             }
 
-            try audioSession.setCategory(avCategory, mode: avMode, options: avOptions)
+            try self.audioSession.setCategory(avCategory, mode: avMode, options: avOptions)
         }
     }
 
@@ -386,11 +403,9 @@ import AVFoundation
     }
 
     private func manageSessionActivation(isActivating: Bool) {
-        let audioSession = AVAudioSession.sharedInstance()
-
         if isActivating {
             do {
-                try audioSession.setActive(true)
+                try self.audioSession.setActive(true)
             } catch {
             }
         } else {
@@ -401,7 +416,7 @@ import AVFoundation
 
             if allStopped && self.enableAutoIosSessionDeactivation {
                 do {
-                    try audioSession.setActive(false)
+                    try self.audioSession.setActive(false)
                 } catch {
                 }
             }

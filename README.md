@@ -479,180 +479,180 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 
 #### ConfigureSessionOptions
 
-| Prop                                   | Type                                                                      |
-| -------------------------------------- | ------------------------------------------------------------------------- |
-| **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      |
-| **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      |
-| **`iosCategory`**                      | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> |
-| **`iosMode`**                          | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         |
-| **`iosOptions`**                       | <code>AVAudioSessionCategoryOptions[]</code>                              |
+| Prop                                   | Type                                                                      | Description                                                                                                                                        | Default           |
+| -------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      | Automatically pause and resume all assets when the audio session is interrupted or resumed.                                                        | <code>true</code> |
+| **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      | Automatically deactivate the IOS audio session when all assets are paused or stopped.                                                              | <code>true</code> |
+| **`iosCategory`**                      | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> | Unique identifier for the IOS audio session. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/category-swift.struct)       |                   |
+| **`iosMode`**                          | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         | Unique identifier for the IOS audio session mode. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/mode-swift.struct)      |                   |
+| **`iosOptions`**                       | <code>AVAudioSessionCategoryOptions[]</code>                              | Options for the IOS audio session category. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/categoryoptions-swift.struct) |                   |
 
 
 #### PauseAllAssetsResponse
 
-| Prop                 | Type                  |
-| -------------------- | --------------------- |
-| **`pausedAssetIds`** | <code>string[]</code> |
+| Prop                 | Type                  | Description                                 |
+| -------------------- | --------------------- | ------------------------------------------- |
+| **`pausedAssetIds`** | <code>string[]</code> | List of asset identifiers that were paused. |
 
 
 #### ResumeAllAssetsResponse
 
-| Prop                  | Type                  |
-| --------------------- | --------------------- |
-| **`resumedAssetIds`** | <code>string[]</code> |
+| Prop                  | Type                  | Description                                  |
+| --------------------- | --------------------- | -------------------------------------------- |
+| **`resumedAssetIds`** | <code>string[]</code> | List of asset identifiers that were resumed. |
 
 
 #### GetAssetsResponse
 
 Asset
 
-| Prop         | Type                  |
-| ------------ | --------------------- |
-| **`assets`** | <code>string[]</code> |
+| Prop         | Type                  | Description                |
+| ------------ | --------------------- | -------------------------- |
+| **`assets`** | <code>string[]</code> | List of asset identifiers. |
 
 
 #### PreloadAssetResponse
 
-| Prop           | Type                |
-| -------------- | ------------------- |
-| **`assetId`**  | <code>string</code> |
-| **`duration`** | <code>number</code> |
+| Prop           | Type                | Description                       |
+| -------------- | ------------------- | --------------------------------- |
+| **`assetId`**  | <code>string</code> | Unique identifier for the asset.  |
+| **`duration`** | <code>number</code> | Duration of the asset in seconds. |
 
 
 #### PreloadAssetOptions
 
-| Prop                         | Type                 |
-| ---------------------------- | -------------------- |
-| **`assetId`**                | <code>string</code>  |
-| **`source`**                 | <code>string</code>  |
-| **`volume`**                 | <code>number</code>  |
-| **`rate`**                   | <code>number</code>  |
-| **`numberOfLoops`**          | <code>number</code>  |
-| **`enablePositionUpdates`**  | <code>boolean</code> |
-| **`positionUpdateInterval`** | <code>number</code>  |
+| Prop                         | Type                 | Description                                                                                                                                                                                                                                                                                                                                                 | Default            |
+| ---------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| **`assetId`**                | <code>string</code>  | Unique identifier for the asset.                                                                                                                                                                                                                                                                                                                            |                    |
+| **`source`**                 | <code>string</code>  | Source of the asset. Can be a local file path or a remote URL.                                                                                                                                                                                                                                                                                              |                    |
+| **`volume`**                 | <code>number</code>  | Volume of the asset. Range is from `0.0` (silent) to `1.0` (full volume).                                                                                                                                                                                                                                                                                   | <code>1.0</code>   |
+| **`rate`**                   | <code>number</code>  | Playback rate of the asset. Range is from `0.5` (half speed) to `2.0` (double speed).                                                                                                                                                                                                                                                                       | <code>1.0</code>   |
+| **`numberOfLoops`**          | <code>number</code>  | Number of times the asset should loop. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops.                                                                                                                                                                                                                   | <code>0</code>     |
+| **`enablePositionUpdates`**  | <code>boolean</code> | Whether to enable position updates for the asset. This allows the asset to send periodic updates about its current playback position. If enabled, the asset will send position updates at the interval specified by `positionUpdateInterval`. You can listen for these updates using the `NativeAudio.addListener('assetPositionUpdate', callback)` method. | <code>false</code> |
+| **`positionUpdateInterval`** | <code>number</code>  | Interval in seconds for position updates. Minimum value is `0.1`. Maximum value is `2.0`.                                                                                                                                                                                                                                                                   | <code>0.5</code>   |
 
 
 #### UnloadAssetResponse
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                               |
+| ------------- | ------------------- | ----------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the unloaded asset. |
 
 
 #### UnloadAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                                |
+| ------------- | ------------------- | ------------------------------------------ |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to unload. |
 
 
 #### GetAssetStateResponse
 
-| Prop              | Type                 |
-| ----------------- | -------------------- |
-| **`assetId`**     | <code>string</code>  |
-| **`isPlaying`**   | <code>boolean</code> |
-| **`currentTime`** | <code>number</code>  |
-| **`duration`**    | <code>number</code>  |
+| Prop              | Type                 | Description                                    |
+| ----------------- | -------------------- | ---------------------------------------------- |
+| **`assetId`**     | <code>string</code>  | Unique identifier for the asset.               |
+| **`isPlaying`**   | <code>boolean</code> | Whether the asset is currently playing.        |
+| **`currentTime`** | <code>number</code>  | Current playback time of the asset in seconds. |
+| **`duration`**    | <code>number</code>  | Duration of the asset in seconds.              |
 
 
 #### GetAssetStateOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                                          |
+| ------------- | ------------------- | ---------------------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to get the state of. |
 
 
 #### PlayAssetResponse
 
-| Prop            | Type                 |
-| --------------- | -------------------- |
-| **`assetId`**   | <code>string</code>  |
-| **`isPlaying`** | <code>boolean</code> |
+| Prop            | Type                 | Description                                      |
+| --------------- | -------------------- | ------------------------------------------------ |
+| **`assetId`**   | <code>string</code>  | Unique identifier for the asset that was played. |
+| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.          |
 
 
 #### PlayAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                              |
+| ------------- | ------------------- | ---------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to play. |
 
 
 #### ResumeAssetResponse
 
-| Prop            | Type                 |
-| --------------- | -------------------- |
-| **`assetId`**   | <code>string</code>  |
-| **`isPlaying`** | <code>boolean</code> |
+| Prop            | Type                 | Description                                       |
+| --------------- | -------------------- | ------------------------------------------------- |
+| **`assetId`**   | <code>string</code>  | Unique identifier for the asset that was resumed. |
+| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.           |
 
 
 #### ResumeAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                                |
+| ------------- | ------------------- | ------------------------------------------ |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to resume. |
 
 
 #### PauseAssetResponse
 
-| Prop            | Type                 |
-| --------------- | -------------------- |
-| **`assetId`**   | <code>string</code>  |
-| **`isPlaying`** | <code>boolean</code> |
+| Prop            | Type                 | Description                                      |
+| --------------- | -------------------- | ------------------------------------------------ |
+| **`assetId`**   | <code>string</code>  | Unique identifier for the asset that was paused. |
+| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.          |
 
 
 #### PauseAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                               |
+| ------------- | ------------------- | ----------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to pause. |
 
 
 #### StopAssetResponse
 
-| Prop            | Type                 |
-| --------------- | -------------------- |
-| **`assetId`**   | <code>string</code>  |
-| **`isPlaying`** | <code>boolean</code> |
+| Prop            | Type                 | Description                                       |
+| --------------- | -------------------- | ------------------------------------------------- |
+| **`assetId`**   | <code>string</code>  | Unique identifier for the asset that was stopped. |
+| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.           |
 
 
 #### StopAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
+| Prop          | Type                | Description                              |
+| ------------- | ------------------- | ---------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to stop. |
 
 
 #### SeekAssetResponse
 
-| Prop              | Type                |
-| ----------------- | ------------------- |
-| **`assetId`**     | <code>string</code> |
-| **`currentTime`** | <code>number</code> |
+| Prop              | Type                | Description                                                  |
+| ----------------- | ------------------- | ------------------------------------------------------------ |
+| **`assetId`**     | <code>string</code> | Unique identifier for the asset that was seeked.             |
+| **`currentTime`** | <code>number</code> | Current playback time of the asset after seeking in seconds. |
 
 
 #### SeekAssetOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
-| **`time`**    | <code>number</code> |
+| Prop          | Type                | Description                              |
+| ------------- | ------------------- | ---------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to seek. |
+| **`time`**    | <code>number</code> | Time in seconds to seek to.              |
 
 
 #### SetAssetVolumeResponse
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
-| **`volume`**  | <code>number</code> |
+| Prop          | Type                | Description                                              |
+| ------------- | ------------------- | -------------------------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset that had its volume set. |
+| **`volume`**  | <code>number</code> | Volume level that was set for the asset.                 |
 
 
 #### SetAssetVolumeOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
-| **`volume`**  | <code>number</code> |
+| Prop          | Type                | Description                                                                      |
+| ------------- | ------------------- | -------------------------------------------------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to set the volume for.                           |
+| **`volume`**  | <code>number</code> | Volume level for the asset. Range is from `0.0` (silent) to `1.0` (full volume). |
 
 
 #### SetAssetRateResponse
@@ -665,10 +665,10 @@ Asset
 
 #### SetAssetRateOptions
 
-| Prop          | Type                |
-| ------------- | ------------------- |
-| **`assetId`** | <code>string</code> |
-| **`rate`**    | <code>number</code> |
+| Prop          | Type                | Description                                                                            |
+| ------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| **`assetId`** | <code>string</code> | Unique identifier for the asset to set the playback rate for.                          |
+| **`rate`**    | <code>number</code> | Playback rate for the asset. Range is from `0.5` (half speed) to `2.0` (double speed). |
 
 
 #### SetAssetNumberOfLoopsResponse
