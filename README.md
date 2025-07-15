@@ -548,12 +548,15 @@ Asset
 
 #### GetAssetStateResponse
 
-| Prop              | Type                 | Description                                    |
-| ----------------- | -------------------- | ---------------------------------------------- |
-| **`assetId`**     | <code>string</code>  | Unique identifier for the asset.               |
-| **`isPlaying`**   | <code>boolean</code> | Whether the asset is currently playing.        |
-| **`currentTime`** | <code>number</code>  | Current playback time of the asset in seconds. |
-| **`duration`**    | <code>number</code>  | Duration of the asset in seconds.              |
+| Prop                | Type                 | Description                                                                                                                       |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **`assetId`**       | <code>string</code>  | Unique identifier for the asset.                                                                                                  |
+| **`isPlaying`**     | <code>boolean</code> | Whether the asset is currently playing.                                                                                           |
+| **`currentTime`**   | <code>number</code>  | Current playback time of the asset in seconds.                                                                                    |
+| **`duration`**      | <code>number</code>  | Duration of the asset in seconds.                                                                                                 |
+| **`volume`**        | <code>number</code>  | Volume level of the asset.                                                                                                        |
+| **`rate`**          | <code>number</code>  | Playback rate of the asset. Range is from `0.5` (half speed) to `2.0` (double speed).                                             |
+| **`numberOfLoops`** | <code>number</code>  | Number of loops for the asset. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops. |
 
 
 #### GetAssetStateOptions
@@ -707,7 +710,7 @@ Asset
 
 | Prop                         | Type                |
 | ---------------------------- | ------------------- |
-| **`assetId`**                | <code>string</code> |
+| **`id`**                     | <code>string</code> |
 | **`positionUpdateInterval`** | <code>number</code> |
 
 
@@ -715,7 +718,7 @@ Asset
 
 | Prop                         | Type                |
 | ---------------------------- | ------------------- |
-| **`assetId`**                | <code>string</code> |
+| **`id`**                     | <code>string</code> |
 | **`positionUpdateInterval`** | <code>number</code> |
 
 
@@ -747,7 +750,7 @@ Asset
 | Prop            | Type                       |
 | --------------- | -------------------------- |
 | **`eventName`** | <code>'assetLoaded'</code> |
-| **`assetId`**   | <code>string</code>        |
+| **`id`**        | <code>string</code>        |
 | **`duration`**  | <code>number</code>        |
 
 
@@ -756,7 +759,7 @@ Asset
 | Prop            | Type                         |
 | --------------- | ---------------------------- |
 | **`eventName`** | <code>'assetUnloaded'</code> |
-| **`assetId`**   | <code>string</code>          |
+| **`id`**        | <code>string</code>          |
 
 
 #### AssetStartedEvent
@@ -764,7 +767,7 @@ Asset
 | Prop            | Type                        |
 | --------------- | --------------------------- |
 | **`eventName`** | <code>'assetStarted'</code> |
-| **`assetId`**   | <code>string</code>         |
+| **`id`**        | <code>string</code>         |
 
 
 #### AssetPausedEvent
@@ -772,7 +775,7 @@ Asset
 | Prop            | Type                       |
 | --------------- | -------------------------- |
 | **`eventName`** | <code>'assetPaused'</code> |
-| **`assetId`**   | <code>string</code>        |
+| **`id`**        | <code>string</code>        |
 
 
 #### AssetStoppedEvent
@@ -780,7 +783,7 @@ Asset
 | Prop            | Type                        |
 | --------------- | --------------------------- |
 | **`eventName`** | <code>'assetStopped'</code> |
-| **`assetId`**   | <code>string</code>         |
+| **`id`**        | <code>string</code>         |
 
 
 #### AssetSeekedEvent
@@ -788,7 +791,7 @@ Asset
 | Prop              | Type                       |
 | ----------------- | -------------------------- |
 | **`eventName`**   | <code>'assetSeeked'</code> |
-| **`assetId`**     | <code>string</code>        |
+| **`id`**          | <code>string</code>        |
 | **`currentTime`** | <code>number</code>        |
 
 
@@ -797,7 +800,7 @@ Asset
 | Prop            | Type                          |
 | --------------- | ----------------------------- |
 | **`eventName`** | <code>'assetCompleted'</code> |
-| **`assetId`**   | <code>string</code>           |
+| **`id`**        | <code>string</code>           |
 
 
 #### AssetErrorEvent
@@ -805,7 +808,7 @@ Asset
 | Prop            | Type                      |
 | --------------- | ------------------------- |
 | **`eventName`** | <code>'assetError'</code> |
-| **`assetId`**   | <code>string</code>       |
+| **`id`**        | <code>string</code>       |
 | **`error`**     | <code>string</code>       |
 
 
@@ -814,7 +817,7 @@ Asset
 | Prop              | Type                               |
 | ----------------- | ---------------------------------- |
 | **`eventName`**   | <code>'assetPositionUpdate'</code> |
-| **`assetId`**     | <code>string</code>                |
+| **`id`**          | <code>string</code>                |
 | **`currentTime`** | <code>number</code>                |
 
 

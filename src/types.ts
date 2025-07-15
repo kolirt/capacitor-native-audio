@@ -176,6 +176,22 @@ export interface GetAssetStateResponse {
    * Duration of the asset in seconds.
    */
   duration: number;
+  /**
+   * Volume level of the asset.
+   */
+  volume: number;
+  /**
+   * Playback rate of the asset.
+   * Range is from `0.5` (half speed) to `2.0` (double speed).
+   */
+  rate: number;
+  /**
+   * Number of loops for the asset.
+   * `-1` means infinite looping.
+   * `0` means no looping.
+   * Positive integers indicate the number of loops.
+   */
+  numberOfLoops: number;
 }
 
 export interface PlayAssetOptions {
@@ -333,12 +349,12 @@ export interface SetAssetEnablePositionUpdatesResponse {
 }
 
 export interface SetAssetPositionUpdateIntervalOptions {
-  assetId: string;
+  id: string;
   positionUpdateInterval: number;
 }
 
 export interface SetAssetPositionUpdateIntervalResponse {
-  assetId: string;
+  id: string;
   positionUpdateInterval: number;
 }
 
@@ -356,49 +372,49 @@ export interface SessionRouteChangedEvent {
 
 export interface AssetLoadedEvent {
   eventName: 'assetLoaded';
-  assetId: string;
+  id: string;
   duration: number;
 }
 
 export interface AssetUnloadedEvent {
   eventName: 'assetUnloaded';
-  assetId: string;
+  id: string;
 }
 
 export interface AssetStartedEvent {
   eventName: 'assetStarted';
-  assetId: string;
+  id: string;
 }
 
 export interface AssetPausedEvent {
   eventName: 'assetPaused';
-  assetId: string;
+  id: string;
 }
 
 export interface AssetStoppedEvent {
   eventName: 'assetStopped';
-  assetId: string;
+  id: string;
 }
 
 export interface AssetSeekedEvent {
   eventName: 'assetSeeked';
-  assetId: string;
+  id: string;
   currentTime: number;
 }
 
 export interface AssetCompletedEvent {
   eventName: 'assetCompleted';
-  assetId: string;
+  id: string;
 }
 
 export interface AssetErrorEvent {
   eventName: 'assetError';
-  assetId: string;
+  id: string;
   error: string;
 }
 
 export interface AssetPositionUpdateEvent {
   eventName: 'assetPositionUpdate';
-  assetId: string;
+  id: string;
   currentTime: number;
 }
