@@ -12,8 +12,8 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "NativeAudio"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "configureSession", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "pauseAllAssets", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "resumeAllAssets", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "pauseAllForInterruption", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "resumeAllAfterInterruption", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getAssets", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "preloadAsset", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "unloadAsset", returnType: CAPPluginReturnPromise),
@@ -131,16 +131,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func pauseAllAssets(_ call: CAPPluginCall) {
-        call.resolve([
-            "pausedIds": self.implementation.pauseAllForInterruption()
-        ])
+    @objc func pauseAllForInterruption(_ call: CAPPluginCall) {
+        call.resolve(self.implementation.pauseAllForInterruption())
     }
 
-    @objc func resumeAllAssets(_ call: CAPPluginCall) {
-        call.resolve([
-            "resumedIds": self.implementation.resumeAllAfterInterruption()
-        ])
+    @objc func resumeAllAfterInterruption(_ call: CAPPluginCall) {
+        call.resolve(self.implementation.resumeAllAfterInterruption())
     }
 
     @objc func getAssets(_ call: CAPPluginCall) {

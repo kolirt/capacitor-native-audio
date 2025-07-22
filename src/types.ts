@@ -50,18 +50,18 @@ export interface ConfigureSessionOptions {
   iosOptions?: AVAudioSessionCategoryOptions[];
 }
 
-export interface PauseAllAssetsResponse {
+export interface PauseAllForInterruptionResponse {
   /**
    * List of asset identifiers that were paused.
    */
-  pausedAssetIds: string[];
+  assetIds: string[];
 }
 
-export interface ResumeAllAssetsResponse {
+export interface ResumeAllAfterInterruptionResponse {
   /**
    * List of asset identifiers that were resumed.
    */
-  resumedAssetIds: string[];
+  assetIds: string[];
 }
 
 /**
@@ -79,7 +79,7 @@ export interface PreloadAssetOptions {
   /**
    * Unique identifier for the asset.
    */
-  assetId: string;
+  id: string;
   /**
    * Source of the asset.
    * Can be a local file path or a remote URL.
@@ -131,7 +131,7 @@ export interface PreloadAssetResponse {
   /**
    * Unique identifier for the asset.
    */
-  assetId: string;
+  id: string;
   /**
    * Duration of the asset in seconds.
    */
@@ -142,28 +142,28 @@ export interface UnloadAssetOptions {
   /**
    * Unique identifier for the asset to unload.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface UnloadAssetResponse {
   /**
    * Unique identifier for the unloaded asset.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface GetAssetStateOptions {
   /**
    * Unique identifier for the asset to get the state of.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface GetAssetStateResponse {
   /**
    * Unique identifier for the asset.
    */
-  assetId: string;
+  id: string;
   /**
    * Whether the asset is currently playing.
    */
@@ -198,14 +198,14 @@ export interface PlayAssetOptions {
   /**
    * Unique identifier for the asset to play.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface PlayAssetResponse {
   /**
    * Unique identifier for the asset that was played.
    */
-  assetId: string;
+  id: string;
   /**
    * Whether the asset is currently playing.
    */
@@ -216,14 +216,14 @@ export interface ResumeAssetOptions {
   /**
    * Unique identifier for the asset to resume.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface ResumeAssetResponse {
   /**
    * Unique identifier for the asset that was resumed.
    */
-  assetId: string;
+  id: string;
   /**
    * Whether the asset is currently playing.
    */
@@ -234,14 +234,14 @@ export interface PauseAssetOptions {
   /**
    * Unique identifier for the asset to pause.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface PauseAssetResponse {
   /**
    * Unique identifier for the asset that was paused.
    */
-  assetId: string;
+  id: string;
   /**
    * Whether the asset is currently playing.
    */
@@ -252,14 +252,14 @@ export interface StopAssetOptions {
   /**
    * Unique identifier for the asset to stop.
    */
-  assetId: string;
+  id: string;
 }
 
 export interface StopAssetResponse {
   /**
    * Unique identifier for the asset that was stopped.
    */
-  assetId: string;
+  id: string;
   /**
    * Whether the asset is currently playing.
    */
@@ -270,7 +270,7 @@ export interface SeekAssetOptions {
   /**
    * Unique identifier for the asset to seek.
    */
-  assetId: string;
+  id: string;
   /**
    * Time in seconds to seek to.
    */
@@ -281,7 +281,7 @@ export interface SeekAssetResponse {
   /**
    * Unique identifier for the asset that was seeked.
    */
-  assetId: string;
+  id: string;
   /**
    * Current playback time of the asset after seeking in seconds.
    */
@@ -292,7 +292,7 @@ export interface SetAssetVolumeOptions {
   /**
    * Unique identifier for the asset to set the volume for.
    */
-  assetId: string;
+  id: string;
   /**
    * Volume level for the asset.
    * Range is from `0.0` (silent) to `1.0` (full volume).
@@ -304,7 +304,7 @@ export interface SetAssetVolumeResponse {
   /**
    * Unique identifier for the asset that had its volume set.
    */
-  assetId: string;
+  id: string;
   /**
    * Volume level that was set for the asset.
    */
@@ -315,7 +315,7 @@ export interface SetAssetRateOptions {
   /**
    * Unique identifier for the asset to set the playback rate for.
    */
-  assetId: string;
+  id: string;
   /**
    * Playback rate for the asset.
    * Range is from `0.5` (half speed) to `2.0` (double speed).
@@ -324,27 +324,27 @@ export interface SetAssetRateOptions {
 }
 
 export interface SetAssetRateResponse {
-  assetId: string;
+  id: string;
   rate: number;
 }
 
 export interface SetAssetNumberOfLoopsOptions {
-  assetId: string;
+  id: string;
   numberOfLoops: number;
 }
 
 export interface SetAssetNumberOfLoopsResponse {
-  assetId: string;
+  id: string;
   numberOfLoops: number;
 }
 
 export interface SetAssetEnablePositionUpdatesOptions {
-  assetId: string;
+  id: string;
   enabled: boolean;
 }
 
 export interface SetAssetEnablePositionUpdatesResponse {
-  assetId: string;
+  id: string;
   enablePositionUpdates: boolean;
 }
 

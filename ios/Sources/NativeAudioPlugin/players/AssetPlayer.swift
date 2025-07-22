@@ -8,7 +8,7 @@ import AVFoundation
 
     private let player: AVAudioPlayer
 
-    private weak var delegate: AssetEventsProtocol?
+    private weak var delegate: PlayerEventsProtocol?
     private var timer: DispatchSourceTimer?
 
     @objc public init(
@@ -19,7 +19,7 @@ import AVFoundation
         numberOfLoops: Int,
         enablePositionUpdates: Bool,
         positionUpdateInterval: TimeInterval,
-        delegate: AssetEventsProtocol
+        delegate: PlayerEventsProtocol
     ) throws {
         self.id = id
         self.player = try AVAudioPlayer(contentsOf: url)
