@@ -3,8 +3,10 @@ import AVFoundation
 @objc public protocol PlayerProtocol: AnyObject {
     var id: String { get }
 
-    @objc var enablePositionUpdates: Bool {get set }
-    @objc var positionUpdateInterval: TimeInterval {get set }
+    @objc var state: [String: Any] { get }
+
+    @objc var enablePositionUpdates: Bool { get set }
+    @objc var positionUpdateInterval: TimeInterval { get set }
 
     @objc var isPlaying: Bool { get }
     @objc var currentTime: TimeInterval { get set }

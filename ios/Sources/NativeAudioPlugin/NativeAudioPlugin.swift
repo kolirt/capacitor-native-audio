@@ -14,20 +14,20 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "configureSession", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "pauseAllForInterruption", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "resumeAllAfterInterruption", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getAssets", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "preloadAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "unloadAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getAssetState", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "playAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "resumeAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "pauseAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "stopAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "seekAsset", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAssetVolume", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAssetRate", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAssetNumberOfLoops", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAssetEnablePositionUpdates", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "setAssetPositionUpdateInterval", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getPlayers", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "preload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "unload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getState", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "play", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "resume", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "pause", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "stop", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "seek", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setVolume", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setRate", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setNumberOfLoops", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setEnablePositionUpdates", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setPositionUpdateInterval", returnType: CAPPluginReturnPromise),
     ]
     private let implementation = NativeAudio()
 
@@ -43,40 +43,40 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     override public func load() {
         let handlers = [
             NotificationHandler(
-                name: .init("NativeAudioAssetLoaded"),
-                selector: #selector(handleAssetLoaded(_:))
+                name: .init("NativeAudioPlayerLoaded"),
+                selector: #selector(handlePlayerLoaded(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetUnloaded"),
-                selector: #selector(handleAssetUnloaded(_:))
+                name: .init("NativeAudioPlayerUnloaded"),
+                selector: #selector(handlePlayerUnloaded(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetStarted"),
-                selector: #selector(handleAssetStarted(_:))
+                name: .init("NativeAudioPlayerStarted"),
+                selector: #selector(handlePlayerStarted(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetPaused"),
-                selector: #selector(handleAssetPaused(_:))
+                name: .init("NativeAudioPlayerPaused"),
+                selector: #selector(handlePlayerPaused(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetStopped"),
-                selector: #selector(handleAssetStopped(_:))
+                name: .init("NativeAudioPlayerStopped"),
+                selector: #selector(handlePlayerStopped(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetSeeked"),
-                selector: #selector(handleAssetSeeked(_:))
+                name: .init("NativeAudioPlayerSeeked"),
+                selector: #selector(handlePlayerSeeked(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetCompleted"),
-                selector: #selector(handleAssetCompleted(_:))
+                name: .init("NativeAudioPlayerCompleted"),
+                selector: #selector(handlePlayerCompleted(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetError"),
-                selector: #selector(handleAssetError(_:))
+                name: .init("NativeAudioPlayerError"),
+                selector: #selector(handlePlayerError(_:))
             ),
             NotificationHandler(
-                name: .init("NativeAudioAssetPositionUpdate"),
-                selector: #selector(handleAssetPositionUpdate(_:))
+                name: .init("NativeAudioPlayerPositionUpdated"),
+                selector: #selector(handlePlayerPositionUpdated(_:))
             ),
         ]
 
@@ -139,17 +139,18 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve(self.implementation.resumeAllAfterInterruption())
     }
 
-    @objc func getAssets(_ call: CAPPluginCall) {
+    @objc func getPlayers(_ call: CAPPluginCall) {
         do {
-            let result = try self.implementation.getAssets()
+            let result = try self.implementation.getPlayers()
             call.resolve(result)
         } catch {
             call.reject("Failed to get assets: \(error.localizedDescription)")
         }
     }
 
-    @objc func preloadAsset(_ call: CAPPluginCall) {
+    @objc func preload(_ call: CAPPluginCall) {
         guard
+            let type = call.getString("type"),
             let id = call.getString("id"),
             let source = call.getString("source")
         else {
@@ -169,7 +170,8 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
 
         Task {
             do {
-                let result = try await self.implementation.preloadAsset(
+                let result = try await self.implementation.preload(
+                    type,
                     id,
                     source: source,
                     volume: volume,
@@ -185,7 +187,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func unloadAsset(_ call: CAPPluginCall) {
+    @objc func unload(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -193,14 +195,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.unloadAsset(id)
+            let result = try self.implementation.unload(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to unload audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func getAssetState(_ call: CAPPluginCall) {
+    @objc func getState(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -208,14 +210,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.getAssetState(id)
+            let result = try self.implementation.getState(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to get state: \(error.localizedDescription)")
         }
     }
 
-    @objc func playAsset(_ call: CAPPluginCall) {
+    @objc func play(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -223,14 +225,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.playAsset(id)
+            let result = try self.implementation.play(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to play audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func resumeAsset(_ call: CAPPluginCall) {
+    @objc func resume(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -238,14 +240,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.playAsset(id)
+            let result = try self.implementation.play(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to resume audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func pauseAsset(_ call: CAPPluginCall) {
+    @objc func pause(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -253,14 +255,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.pauseAsset(id)
+            let result = try self.implementation.pause(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to pause audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func stopAsset(_ call: CAPPluginCall) {
+    @objc func stop(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
         else {
@@ -268,14 +270,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.stopAsset(id)
+            let result = try self.implementation.stop(id)
             call.resolve(result)
         } catch {
             call.reject("Failed to stop audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func seekAsset(_ call: CAPPluginCall) {
+    @objc func seek(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let time = call.getDouble("time")
@@ -284,14 +286,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.seekAsset(id, time: time)
+            let result = try self.implementation.seek(id, time: time)
             call.resolve(result)
         } catch {
             call.reject("Failed to seek audio: \(error.localizedDescription)")
         }
     }
 
-    @objc func setAssetVolume(_ call: CAPPluginCall) {
+    @objc func setVolume(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let volume = call.getFloat("volume")
@@ -300,14 +302,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetVolume(id, volume: volume)
+            let result = try self.implementation.setVolume(id, volume: volume)
             call.resolve(result)
         } catch {
             call.reject("Failed to set volume: \(error.localizedDescription)")
         }
     }
 
-    @objc func setAssetRate(_ call: CAPPluginCall) {
+    @objc func setRate(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let rate = call.getFloat("rate")
@@ -316,14 +318,14 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetRate(id, rate: rate)
+            let result = try self.implementation.setRate(id, rate: rate)
             call.resolve(result)
         } catch {
             call.reject("Failed to set rate: \(error.localizedDescription)")
         }
     }
 
-    @objc func setAssetNumberOfLoops(_ call: CAPPluginCall) {
+    @objc func setNumberOfLoops(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let numberOfLoops = call.getInt("numberOfLoops")
@@ -332,17 +334,17 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetNumberOfLoops(
+            let result = try self.implementation.setNumberOfLoops(
                 id,
                 numberOfLoops: numberOfLoops
-                )
+            )
             call.resolve(result)
         } catch {
             call.reject("Failed to set numberOfLoops: \(error.localizedDescription)")
         }
     }
 
-    @objc func setAssetEnablePositionUpdates(_ call: CAPPluginCall) {
+    @objc func setEnablePositionUpdates(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let enabled = call.getBool("enabled")
@@ -351,7 +353,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetEnablePositionUpdates(
+            let result = try self.implementation.setEnablePositionUpdates(
                 id,
                 enabled: enabled
             )
@@ -361,7 +363,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func setAssetPositionUpdateInterval(_ call: CAPPluginCall) {
+    @objc func setPositionUpdateInterval(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id"),
             let interval = call.getDouble("positionUpdateInterval")
@@ -370,7 +372,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         do {
-            let result = try self.implementation.setAssetPositionUpdateInterval(
+            let result = try self.implementation.setPositionUpdateInterval(
                 id,
                 interval: interval
             )
@@ -384,7 +386,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
      * Event listeners
      */
 
-    @objc private func handleAssetLoaded(_ notification: NSNotification) {
+    @objc private func handlePlayerLoaded(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -393,12 +395,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetLoaded",
+            "playerLoaded",
             data: ["eventName": eventName, "id": id, "duration": duration]
         )
     }
 
-    @objc private func handleAssetUnloaded(_ notification: NSNotification) {
+    @objc private func handlePlayerUnloaded(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -406,12 +408,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetUnloaded",
+            "playerUnloaded",
             data: ["eventName": eventName, "id": id]
         )
     }
 
-    @objc private func handleAssetStarted(_ notification: NSNotification) {
+    @objc private func handlePlayerStarted(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -419,12 +421,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetStarted",
+            "playerStarted",
             data: ["eventName": eventName, "id": id]
         )
     }
 
-    @objc private func handleAssetPaused(_ notification: NSNotification) {
+    @objc private func handlePlayerPaused(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -432,12 +434,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetPaused",
+            "playerPaused",
             data: ["eventName": eventName, "id": id]
         )
     }
 
-    @objc private func handleAssetStopped(_ notification: NSNotification) {
+    @objc private func handlePlayerStopped(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -445,12 +447,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetStopped",
+            "playerStopped",
             data: ["eventName": eventName, "id": id]
         )
     }
 
-    @objc private func handleAssetSeeked(_ notification: NSNotification) {
+    @objc private func handlePlayerSeeked(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -459,12 +461,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetSeeked",
+            "playerSeeked",
             data: ["eventName": eventName, "id": id, "currentTime": currentTime]
         )
     }
 
-    @objc private func handleAssetCompleted(_ notification: NSNotification) {
+    @objc private func handlePlayerCompleted(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -472,12 +474,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetCompleted",
+            "playerCompleted",
             data: ["eventName": eventName, "id": id]
         )
     }
 
-    @objc private func handleAssetError(_ notification: NSNotification) {
+    @objc private func handlePlayerError(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -486,12 +488,12 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetError",
+            "playerError",
             data: ["eventName": eventName, "id": id, "error": error]
         )
     }
 
-    @objc private func handleAssetPositionUpdate(_ notification: NSNotification) {
+    @objc private func handlePlayerPositionUpdated(_ notification: NSNotification) {
         guard
             let userInfo = notification.userInfo,
             let eventName = userInfo["eventName"] as? String,
@@ -500,7 +502,7 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         else { return }
 
         notifyListeners(
-            "assetPositionUpdate",
+            "playerPositionUpdated",
             data: ["eventName": eventName, "id": id, "currentTime": currentTime]
         )
     }

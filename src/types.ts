@@ -52,55 +52,55 @@ export interface ConfigureSessionOptions {
 
 export interface PauseAllForInterruptionResponse {
   /**
-   * List of asset identifiers that were paused.
+   * List of player identifiers that were paused.
    */
-  assetIds: string[];
+  ids: string[];
 }
 
 export interface ResumeAllAfterInterruptionResponse {
   /**
-   * List of asset identifiers that were resumed.
+   * List of player identifiers that were resumed.
    */
-  assetIds: string[];
+  ids: string[];
 }
 
-/**
- * Asset
- */
-
-export interface GetAssetsResponse {
+export interface GetResponse {
   /**
-   * List of asset identifiers.
+   * List of player identifiers.
    */
-  assets: string[];
+  ids: string[];
 }
 
-export interface PreloadAssetOptions {
+export interface PreloadOptions {
   /**
-   * Unique identifier for the asset.
+   * Type of the player to preload.
+   */
+  type: 'asset' | 'mixer'
+  /**
+   * Unique identifier for the player.
    */
   id: string;
   /**
-   * Source of the asset.
+   * Source of the player to preload.
    * Can be a local file path or a remote URL.
    */
   source: string;
   /**
-   * Volume of the asset.
+   * Volume of the player.
    * Range is from `0.0` (silent) to `1.0` (full volume).
    *
    * @default 1.0
    */
   volume?: number;
   /**
-   * Playback rate of the asset.
+   * Playback rate of the player.
    * Range is from `0.5` (half speed) to `2.0` (double speed).
    *
    * @default 1.0
    */
   rate?: number;
   /**
-   * Number of times the asset should loop.
+   * Number of times the player should loop.
    * `-1` means infinite looping.
    * `0` means no looping.
    * Positive integers indicate the number of loops.
@@ -109,10 +109,10 @@ export interface PreloadAssetOptions {
    */
   numberOfLoops?: number;
   /**
-   * Whether to enable position updates for the asset.
-   * This allows the asset to send periodic updates about its current playback position.
-   * If enabled, the asset will send position updates at the interval specified by `positionUpdateInterval`.
-   * You can listen for these updates using the `NativeAudio.addListener('assetPositionUpdate', callback)` method.
+   * Whether to enable position updates for the player.
+   * This allows the player to send periodic updates about its current playback position.
+   * If enabled, the player will send position updates at the interval specified by `positionUpdateInterval`.
+   * You can listen for these updates using the `NativeAudio.addListener('playerPositionUpdated', callback)` method.
    *
    * @default false
    */
@@ -127,7 +127,7 @@ export interface PreloadAssetOptions {
   positionUpdateInterval?: number;
 }
 
-export interface PreloadAssetResponse {
+export interface PreloadResponse {
   /**
    * Unique identifier for the asset.
    */
@@ -138,55 +138,60 @@ export interface PreloadAssetResponse {
   duration: number;
 }
 
-export interface UnloadAssetOptions {
+export interface UnloadOptions {
   /**
-   * Unique identifier for the asset to unload.
+   * Unique identifier for the player to unload.
    */
   id: string;
 }
 
-export interface UnloadAssetResponse {
+export interface UnloadResponse {
   /**
-   * Unique identifier for the unloaded asset.
+   * Unique identifier for the unloaded player.
    */
   id: string;
 }
 
-export interface GetAssetStateOptions {
+export interface GetStateOptions {
   /**
-   * Unique identifier for the asset to get the state of.
+   * Unique identifier for the player to get the state of.
    */
   id: string;
 }
 
-export interface GetAssetStateResponse {
+export interface GetStateResponse {
   /**
-   * Unique identifier for the asset.
+   * Type of the player.
+   * Can be either 'asset' or 'mixer'.
+   */
+  type: 'asset' | 'mixer';
+  /**
+   * Unique identifier for the player.
    */
   id: string;
   /**
-   * Whether the asset is currently playing.
+   * Whether the player is currently playing.
    */
   isPlaying: boolean;
   /**
-   * Current playback time of the asset in seconds.
+   * Current playback time of the player in seconds.
    */
   currentTime: number;
   /**
-   * Duration of the asset in seconds.
+   * Duration of the player in seconds.
    */
   duration: number;
   /**
-   * Volume level of the asset.
+   * Volume level of the player.
    */
   volume: number;
   /**
-   * Playback rate of the asset.
+   * Playback rate of the player.
    * Range is from `0.5` (half speed) to `2.0` (double speed).
    */
   rate: number;
   /**
-   * Number of loops for the asset.
+   * Number of loops for the player.
    * `-1` means infinite looping.
    * `0` means no looping.
    * Positive integers indicate the number of loops.
@@ -194,81 +199,81 @@ export interface GetAssetStateResponse {
   numberOfLoops: number;
 }
 
-export interface PlayAssetOptions {
+export interface PlayOptions {
   /**
-   * Unique identifier for the asset to play.
+   * Unique identifier for the player to play.
    */
   id: string;
 }
 
-export interface PlayAssetResponse {
+export interface PlayResponse {
   /**
-   * Unique identifier for the asset that was played.
+   * Unique identifier for the player that was played.
    */
   id: string;
   /**
-   * Whether the asset is currently playing.
+   * Whether the player is currently playing.
    */
   isPlaying: boolean;
 }
 
-export interface ResumeAssetOptions {
+export interface ResumeOptions {
   /**
-   * Unique identifier for the asset to resume.
+   * Unique identifier for the player to resume.
    */
   id: string;
 }
 
-export interface ResumeAssetResponse {
+export interface ResumeResponse {
   /**
-   * Unique identifier for the asset that was resumed.
+   * Unique identifier for the player that was resumed.
    */
   id: string;
   /**
-   * Whether the asset is currently playing.
+   * Whether the player is currently playing.
    */
   isPlaying: boolean;
 }
 
-export interface PauseAssetOptions {
+export interface PauseOptions {
   /**
-   * Unique identifier for the asset to pause.
+   * Unique identifier for the player to pause.
    */
   id: string;
 }
 
-export interface PauseAssetResponse {
+export interface PauseResponse {
   /**
-   * Unique identifier for the asset that was paused.
+   * Unique identifier for the player that was paused.
    */
   id: string;
   /**
-   * Whether the asset is currently playing.
+   * Whether the player is currently playing.
    */
   isPlaying: boolean;
 }
 
-export interface StopAssetOptions {
+export interface StopOptions {
   /**
-   * Unique identifier for the asset to stop.
+   * Unique identifier for the player to stop.
    */
   id: string;
 }
 
-export interface StopAssetResponse {
+export interface StopResponse {
   /**
-   * Unique identifier for the asset that was stopped.
+   * Unique identifier for the player that was stopped.
    */
   id: string;
   /**
-   * Whether the asset is currently playing.
+   * Whether the player is currently playing.
    */
   isPlaying: boolean;
 }
 
-export interface SeekAssetOptions {
+export interface SeekOptions {
   /**
-   * Unique identifier for the asset to seek.
+   * Unique identifier for the player to seek.
    */
   id: string;
   /**
@@ -277,84 +282,132 @@ export interface SeekAssetOptions {
   time: number;
 }
 
-export interface SeekAssetResponse {
+export interface SeekResponse {
   /**
-   * Unique identifier for the asset that was seeked.
+   * Unique identifier for the player that was seeked.
    */
   id: string;
   /**
-   * Current playback time of the asset after seeking in seconds.
+   * Current playback time of the player after seeking in seconds.
    */
   currentTime: number;
 }
 
-export interface SetAssetVolumeOptions {
+export interface SetVolumeOptions {
   /**
-   * Unique identifier for the asset to set the volume for.
+   * Unique identifier for the player to set the volume for.
    */
   id: string;
   /**
-   * Volume level for the asset.
+   * Volume level for the player.
    * Range is from `0.0` (silent) to `1.0` (full volume).
    */
   volume: number;
 }
 
-export interface SetAssetVolumeResponse {
+export interface SetVolumeResponse {
   /**
-   * Unique identifier for the asset that had its volume set.
+   * Unique identifier for the player that had its volume set.
    */
   id: string;
   /**
-   * Volume level that was set for the asset.
+   * Volume level that was set for the player.
    */
   volume: number;
 }
 
-export interface SetAssetRateOptions {
+export interface SetRateOptions {
   /**
-   * Unique identifier for the asset to set the playback rate for.
+   * Unique identifier for the player to set the playback rate for.
    */
   id: string;
   /**
-   * Playback rate for the asset.
+   * Playback rate for the player.
    * Range is from `0.5` (half speed) to `2.0` (double speed).
    */
   rate: number;
 }
 
-export interface SetAssetRateResponse {
+export interface SetRateResponse {
+  /**
+   * Unique identifier for the player that had its playback rate set.
+   */
   id: string;
+  /**
+   * Playback rate that was set for the player.
+   */
   rate: number;
 }
 
-export interface SetAssetNumberOfLoopsOptions {
+export interface SetNumberOfLoopsOptions {
+  /**
+   * Unique identifier for the player to set the number of loops for.
+   */
   id: string;
+  /**
+   * Number of loops for the player.
+   * `-1` means infinite looping.
+   * `0` means no looping.
+   * Positive integers indicate the number of loops.
+   */
   numberOfLoops: number;
 }
 
-export interface SetAssetNumberOfLoopsResponse {
+export interface SetNumberOfLoopsResponse {
+  /**
+   * Unique identifier for the player that had its number of loops set.
+   */
   id: string;
+  /**
+   * Number of loops that was set for the player.
+   */
   numberOfLoops: number;
 }
 
-export interface SetAssetEnablePositionUpdatesOptions {
+export interface SetEnablePositionUpdatesOptions {
+  /**
+   * Unique identifier for the player to enable or disable position updates for.
+   */
   id: string;
+  /**
+   * Whether to enable position updates for the player.
+   */
   enabled: boolean;
 }
 
-export interface SetAssetEnablePositionUpdatesResponse {
+export interface SetEnablePositionUpdatesResponse {
+  /**
+   * Unique identifier for the player that had position updates enabled or disabled.
+   */
   id: string;
+  /**
+   * Whether position updates are enabled for the player.
+   */
   enablePositionUpdates: boolean;
 }
 
-export interface SetAssetPositionUpdateIntervalOptions {
+export interface SetPositionUpdateIntervalOptions {
+  /**
+   * Unique identifier for the player to set the position update interval for.
+   */
   id: string;
+  /**
+   * Interval in seconds for position updates.
+   * Minimum value is `0.1`.
+   * Maximum value is `2.0`.
+   * Default is `0.5`.
+   */
   positionUpdateInterval: number;
 }
 
-export interface SetAssetPositionUpdateIntervalResponse {
+export interface SetPositionUpdateIntervalResponse {
+  /**
+   * Unique identifier for the player that had its position update interval set.
+   */
   id: string;
+  /**
+   * Position update interval that was set for the player.
+   */
   positionUpdateInterval: number;
 }
 
@@ -370,51 +423,51 @@ export interface SessionRouteChangedEvent {
   reason: number;
 }
 
-export interface AssetLoadedEvent {
-  eventName: 'assetLoaded';
+export interface PlayerLoadedEvent {
+  eventName: 'playerLoaded';
   id: string;
   duration: number;
 }
 
-export interface AssetUnloadedEvent {
-  eventName: 'assetUnloaded';
+export interface PlayerUnloadedEvent {
+  eventName: 'playerUnloaded';
   id: string;
 }
 
-export interface AssetStartedEvent {
-  eventName: 'assetStarted';
+export interface PlayerStartedEvent {
+  eventName: 'playerStarted';
   id: string;
 }
 
-export interface AssetPausedEvent {
-  eventName: 'assetPaused';
+export interface PlayerPausedEvent {
+  eventName: 'playerPaused';
   id: string;
 }
 
-export interface AssetStoppedEvent {
-  eventName: 'assetStopped';
+export interface PlayerStoppedEvent {
+  eventName: 'playerStopped';
   id: string;
 }
 
-export interface AssetSeekedEvent {
-  eventName: 'assetSeeked';
+export interface PlayerSeekedEvent {
+  eventName: 'playerSeeked';
   id: string;
   currentTime: number;
 }
 
-export interface AssetCompletedEvent {
-  eventName: 'assetCompleted';
+export interface PlayerCompletedEvent {
+  eventName: 'playerCompleted';
   id: string;
 }
 
-export interface AssetErrorEvent {
-  eventName: 'assetError';
+export interface PlayerErrorEvent {
+  eventName: 'playerError';
   id: string;
   error: string;
 }
 
-export interface AssetPositionUpdateEvent {
-  eventName: 'assetPositionUpdate';
+export interface PlayerPositionUpdatedEvent {
+  eventName: 'playerPositionUpdated';
   id: string;
   currentTime: number;
 }

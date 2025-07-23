@@ -38,13 +38,13 @@ import AVFoundation
         self.player.prepareToPlay()
         self.player.delegate = self
 
-        self.delegate?.onAssetLoaded(self.id, duration: self.player.duration)
+        self.delegate?.onPlayerLoaded(self.id, duration: self.player.duration)
     }
 
     deinit {
         self.player.stop()
         self.stopPositionUpdates()
-        self.delegate?.onAssetUnloaded(self.id)
+        self.delegate?.onPlayerUnloaded(self.id)
         self.player.delegate = nil
     }
 
@@ -70,7 +70,7 @@ import AVFoundation
             else { return }
 
             DispatchQueue.main.async {
-                delegate.onAssetPositionUpdated(self.id, currentTime: self.currentTime)
+                delegate.onPlayerPositionUpdated(self.id, currentTime: self.currentTime)
             }
         }
 
@@ -90,7 +90,7 @@ import AVFoundation
         else { return }
 
         if flag {
-            delegate.onAssetCompleted(self.id)
+            delegate.onPlayerCompleted(self.id)
         }
     }
 
@@ -101,7 +101,7 @@ import AVFoundation
             let delegate = self.delegate
         else { return }
 
-        delegate.onAssetError(
+        delegate.onPlayerError(
             self.id,
             error: error?.localizedDescription ?? "Unknown error"
         )
@@ -109,6 +109,23 @@ import AVFoundation
 }
 
 extension AssetPlayer: PlayerProtocol {
+    @objc public var state: [String: Any] {
+        get {
+            return [
+                "type": "asset",
+                "id": self.id,
+                "enablePositionUpdates": self.enablePositionUpdates,
+                "positionUpdateInterval": self.positionUpdateInterval,
+                "isPlaying": self.isPlaying,
+                "currentTime": self.currentTime,
+                "duration": self.duration,
+                "volume": self.volume,
+                "rate": self.rate,
+                "numberOfLoops": self.numberOfLoops,
+            ]
+        }
+    }
+
     @objc public var enablePositionUpdates: Bool {
         get {
             // return self.queue.sync {
@@ -182,7 +199,7 @@ extension AssetPlayer: PlayerProtocol {
         if !self.isPlaying {
             if self.player.play() {
                 self.startPositionUpdates()
-                self.delegate?.onAssetStarted(self.id)
+                self.delegate?.onPlayerStarted(self.id)
             }
         }
         return self.isPlaying
@@ -192,7 +209,7 @@ extension AssetPlayer: PlayerProtocol {
         if self.isPlaying {
             self.player.pause()
             self.stopPositionUpdates()
-            self.delegate?.onAssetPaused(self.id)
+            self.delegate?.onPlayerPaused(self.id)
         }
         return self.isPlaying
     }
@@ -203,13 +220,13 @@ extension AssetPlayer: PlayerProtocol {
             self.stopPositionUpdates()
         }
         self.currentTime = 0
-        self.delegate?.onAssetStopped(self.id)
+        self.delegate?.onPlayerStopped(self.id)
         return self.isPlaying
     }
 
     @objc public func seek(to time: TimeInterval) -> TimeInterval {
         self.currentTime = time
-        self.delegate?.onAssetSeeked(self.id, currentTime: self.currentTime)
+        self.delegate?.onPlayerSeeked(self.id, currentTime: self.currentTime)
         return self.currentTime
     }
 }

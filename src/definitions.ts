@@ -1,48 +1,48 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 import type {
+  PlayerCompletedEvent,
+  PlayerErrorEvent,
+  PlayerLoadedEvent,
+  PlayerPausedEvent,
+  PlayerPositionUpdatedEvent,
+  PlayerSeekedEvent,
+  PlayerStartedEvent,
+  PlayerStoppedEvent,
+  PlayerUnloadedEvent,
   ConfigureSessionOptions,
-  GetAssetsResponse,
-  PreloadAssetOptions,
-  PreloadAssetResponse,
-  SetAssetRateOptions,
-  SetAssetRateResponse,
-  SetAssetVolumeOptions,
-  SetAssetVolumeResponse,
-  UnloadAssetOptions,
-  UnloadAssetResponse,
-  GetAssetStateOptions,
-  GetAssetStateResponse,
-  PauseAssetOptions,
-  PauseAssetResponse,
-  PlayAssetOptions,
-  PlayAssetResponse,
-  SeekAssetOptions,
-  SeekAssetResponse,
-  SetAssetNumberOfLoopsOptions,
-  SetAssetNumberOfLoopsResponse,
-  SetAssetEnablePositionUpdatesOptions,
-  SetAssetEnablePositionUpdatesResponse,
-  SetAssetPositionUpdateIntervalOptions,
-  SetAssetPositionUpdateIntervalResponse,
-  StopAssetOptions,
-  StopAssetResponse,
+  EventListener,
+  GetResponse,
+  GetStateOptions,
+  GetStateResponse,
+  PauseAllForInterruptionResponse,
+  PauseOptions,
+  PauseResponse,
+  PlayOptions,
+  PlayResponse,
+  PreloadOptions,
+  PreloadResponse,
+  ResumeAllAfterInterruptionResponse,
+  ResumeOptions,
+  ResumeResponse,
+  SeekOptions,
+  SeekResponse,
   SessionInterruptedEvent,
   SessionRouteChangedEvent,
-  AssetLoadedEvent,
-  AssetUnloadedEvent,
-  EventListener,
-  AssetStartedEvent,
-  AssetPausedEvent,
-  AssetStoppedEvent,
-  AssetSeekedEvent,
-  AssetCompletedEvent,
-  AssetErrorEvent,
-  AssetPositionUpdateEvent,
-  ResumeAssetOptions,
-  ResumeAssetResponse,
-  PauseAllForInterruptionResponse,
-  ResumeAllAfterInterruptionResponse,
+  SetEnablePositionUpdatesOptions,
+  SetEnablePositionUpdatesResponse,
+  SetNumberOfLoopsOptions,
+  SetNumberOfLoopsResponse,
+  SetPositionUpdateIntervalOptions,
+  SetPositionUpdateIntervalResponse,
+  SetRateOptions,
+  SetRateResponse,
+  SetVolumeOptions,
+  SetVolumeResponse,
+  StopOptions,
+  StopResponse,
+  UnloadOptions,
+  UnloadResponse,
 } from './types';
 
 interface NativeAudioPlugin {
@@ -51,27 +51,23 @@ interface NativeAudioPlugin {
   resumeAllAfterInterruption(): Promise<ResumeAllAfterInterruptionResponse>;
 
   /**
-   * Asset
+   * Player
    */
 
-  getAssets(): Promise<GetAssetsResponse>;
-  preloadAsset(options: PreloadAssetOptions): Promise<PreloadAssetResponse>;
-  unloadAsset(options: UnloadAssetOptions): Promise<UnloadAssetResponse>;
-  getAssetState(options: GetAssetStateOptions): Promise<GetAssetStateResponse>;
-  playAsset(options: PlayAssetOptions): Promise<PlayAssetResponse>;
-  resumeAsset(options: ResumeAssetOptions): Promise<ResumeAssetResponse>;
-  pauseAsset(options: PauseAssetOptions): Promise<PauseAssetResponse>;
-  stopAsset(options: StopAssetOptions): Promise<StopAssetResponse>;
-  seekAsset(options: SeekAssetOptions): Promise<SeekAssetResponse>;
-  setAssetVolume(options: SetAssetVolumeOptions): Promise<SetAssetVolumeResponse>;
-  setAssetRate(options: SetAssetRateOptions): Promise<SetAssetRateResponse>;
-  setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions): Promise<SetAssetNumberOfLoopsResponse>;
-  setAssetEnablePositionUpdates(
-    options: SetAssetEnablePositionUpdatesOptions,
-  ): Promise<SetAssetEnablePositionUpdatesResponse>;
-  setAssetPositionUpdateInterval(
-    options: SetAssetPositionUpdateIntervalOptions,
-  ): Promise<SetAssetPositionUpdateIntervalResponse>;
+  getPlayers(): Promise<GetResponse>;
+  preload(options: PreloadOptions): Promise<PreloadResponse>;
+  unload(options: UnloadOptions): Promise<UnloadResponse>;
+  getState(options: GetStateOptions): Promise<GetStateResponse>;
+  play(options: PlayOptions): Promise<PlayResponse>;
+  resume(options: ResumeOptions): Promise<ResumeResponse>;
+  pause(options: PauseOptions): Promise<PauseResponse>;
+  stop(options: StopOptions): Promise<StopResponse>;
+  seek(options: SeekOptions): Promise<SeekResponse>;
+  setVolume(options: SetVolumeOptions): Promise<SetVolumeResponse>;
+  setRate(options: SetRateOptions): Promise<SetRateResponse>;
+  setNumberOfLoops(options: SetNumberOfLoopsOptions): Promise<SetNumberOfLoopsResponse>;
+  setEnablePositionUpdates(options: SetEnablePositionUpdatesOptions): Promise<SetEnablePositionUpdatesResponse>;
+  setPositionUpdateInterval(options: SetPositionUpdateIntervalOptions): Promise<SetPositionUpdateIntervalResponse>;
 
   /**
    * Event Listeners
@@ -91,48 +87,48 @@ interface NativeAudioPlugin {
    */
 
   addListener(
-    eventName: AssetLoadedEvent['eventName'],
-    listenerFunc: EventListener<AssetLoadedEvent>,
+    eventName: PlayerLoadedEvent['eventName'],
+    listenerFunc: EventListener<PlayerLoadedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetUnloadedEvent['eventName'],
-    listenerFunc: EventListener<AssetUnloadedEvent>,
+    eventName: PlayerUnloadedEvent['eventName'],
+    listenerFunc: EventListener<PlayerUnloadedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetStartedEvent['eventName'],
-    listenerFunc: EventListener<AssetStartedEvent>,
+    eventName: PlayerStartedEvent['eventName'],
+    listenerFunc: EventListener<PlayerStartedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetPausedEvent['eventName'],
-    listenerFunc: EventListener<AssetPausedEvent>,
+    eventName: PlayerPausedEvent['eventName'],
+    listenerFunc: EventListener<PlayerPausedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetStoppedEvent['eventName'],
-    listenerFunc: EventListener<AssetStoppedEvent>,
+    eventName: PlayerStoppedEvent['eventName'],
+    listenerFunc: EventListener<PlayerStoppedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetSeekedEvent['eventName'],
-    listenerFunc: EventListener<AssetSeekedEvent>,
+    eventName: PlayerSeekedEvent['eventName'],
+    listenerFunc: EventListener<PlayerSeekedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetCompletedEvent['eventName'],
-    listenerFunc: EventListener<AssetCompletedEvent>,
+    eventName: PlayerCompletedEvent['eventName'],
+    listenerFunc: EventListener<PlayerCompletedEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetErrorEvent['eventName'],
-    listenerFunc: EventListener<AssetErrorEvent>,
+    eventName: PlayerErrorEvent['eventName'],
+    listenerFunc: EventListener<PlayerErrorEvent>,
   ): Promise<PluginListenerHandle>;
 
   addListener(
-    eventName: AssetPositionUpdateEvent['eventName'],
-    listenerFunc: EventListener<AssetPositionUpdateEvent>,
+    eventName: PlayerPositionUpdatedEvent['eventName'],
+    listenerFunc: EventListener<PlayerPositionUpdatedEvent>,
   ): Promise<PluginListenerHandle>;
 }
 

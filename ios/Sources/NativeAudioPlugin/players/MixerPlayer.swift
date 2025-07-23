@@ -35,7 +35,7 @@ import AVFoundation
             delegate: self
         )
 
-        self.delegate?.onMixerLoaded(self.id, duration: self.duration)
+        self.delegate?.onPlayerLoaded(self.id, duration: self.duration)
     }
 
     deinit {
@@ -43,48 +43,58 @@ import AVFoundation
         for (_, backgroundPlayer) in self.backgroundPlayers {
             let _ = backgroundPlayer.stop()
         }
-        self.delegate?.onMixerUnloaded(self.id)
+        self.delegate?.onPlayerUnloaded(self.id)
     }
 }
 
 extension MixerPlayer: PlayerEventsProtocol {
-    @objc public func onAssetLoaded(_ assetId: String, duration: TimeInterval) {
-        self.delegate?.onAssetLoaded(self.id, duration: duration)
-    }
-    @objc public func onAssetUnloaded(_ assetId: String) {
-        self.delegate?.onAssetUnloaded(self.id)
-    }
-    @objc public func onAssetStarted(_ assetId: String) {
-        self.delegate?.onAssetStarted(self.id)
-    }
-    @objc public func onAssetPaused(_ assetId: String) {
-        self.delegate?.onAssetPaused(self.id)
-    }
-    @objc public func onAssetStopped(_ assetId: String) {
-        self.delegate?.onAssetStopped(self.id)
-    }
-    @objc public func onAssetSeeked(_ assetId: String, currentTime: TimeInterval) {
-        self.delegate?.onAssetSeeked(self.id, currentTime: currentTime)
-    }
-    @objc public func onAssetCompleted(_ assetId: String) {
-        self.delegate?.onAssetCompleted(self.id)
-    }
-    @objc public func onAssetError(_ assetId: String, error: String) {
-        self.delegate?.onAssetError(self.id, error: error)
-    }
-    @objc public func onAssetPositionUpdated(_ assetId: String, currentTime: TimeInterval) {
-        self.delegate?.onAssetPositionUpdated(self.id, currentTime: currentTime)
+    @objc public func onPlayerLoaded(_ id: String, duration: TimeInterval) {
     }
 
-    @objc public func onMixerLoaded(_ id: String, duration: TimeInterval) {}
-    @objc public func onMixerUnloaded(_ id: String) {}
-    @objc public func onMixerStarted(_ id: String) {}
-    @objc public func onMixerPaused(_ id: String) {}
-    @objc public func onMixerStopped(_ id: String) {}
-    @objc public func onMixerSeeked(_ id: String, currentTime: TimeInterval) {}
-    @objc public func onMixerCompleted(_ id: String) {}
-    @objc public func onMixerError(_ id: String, error: String) {}
-    @objc public func onMixerPositionUpdated(_ id: String, currentTime: TimeInterval) {}
+    @objc public func onPlayerUnloaded(_ id: String) {
+    }
+
+    @objc public func onPlayerStarted(_ id: String) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerStarted(self.id)
+        }
+    }
+
+    @objc public func onPlayerPaused(_ id: String) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerPaused(self.id)
+        }
+    }
+
+    @objc public func onPlayerStopped(_ id: String) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerStopped(self.id)
+        }
+    }
+
+    @objc public func onPlayerSeeked(_ id: String, currentTime: TimeInterval) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerSeeked(self.id, currentTime: currentTime)
+        }
+    }
+
+    @objc public func onPlayerCompleted(_ id: String) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerCompleted(self.id)
+        }
+    }
+
+    @objc public func onPlayerError(_ id: String, error: String) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerError(self.id, error: error)
+        }
+    }
+
+    @objc public func onPlayerPositionUpdated(_ id: String, currentTime: TimeInterval) {
+        if id == self.id + "_main" {
+            self.delegate?.onPlayerPositionUpdated(self.id, currentTime: currentTime)
+        }
+    }
 
     @objc public func onMixerBackgroundLoaded(
         _ mixerId: String, _ backgroundId: String, duration: TimeInterval
@@ -93,6 +103,23 @@ extension MixerPlayer: PlayerEventsProtocol {
 }
 
 extension MixerPlayer: PlayerProtocol {
+    @objc public var state: [String: Any] {
+        get {
+            return [
+                "type": "mixer",
+                "id": self.id,
+                "enablePositionUpdates": self.enablePositionUpdates,
+                "positionUpdateInterval": self.positionUpdateInterval,
+                "isPlaying": self.isPlaying,
+                "currentTime": self.currentTime,
+                "duration": self.duration,
+                "volume": self.volume,
+                "rate": self.rate,
+                "numberOfLoops": self.numberOfLoops,
+            ]
+        }
+    }
+
     @objc public var enablePositionUpdates: Bool {
         get { return self.player?.enablePositionUpdates ?? false }
         set(newValue) { self.player?.enablePositionUpdates = newValue }

@@ -16,31 +16,31 @@ npx cap sync
 * [`configureSession(...)`](#configuresession)
 * [`pauseAllForInterruption()`](#pauseallforinterruption)
 * [`resumeAllAfterInterruption()`](#resumeallafterinterruption)
-* [`getAssets()`](#getassets)
-* [`preloadAsset(...)`](#preloadasset)
-* [`unloadAsset(...)`](#unloadasset)
-* [`getAssetState(...)`](#getassetstate)
-* [`playAsset(...)`](#playasset)
-* [`resumeAsset(...)`](#resumeasset)
-* [`pauseAsset(...)`](#pauseasset)
-* [`stopAsset(...)`](#stopasset)
-* [`seekAsset(...)`](#seekasset)
-* [`setAssetVolume(...)`](#setassetvolume)
-* [`setAssetRate(...)`](#setassetrate)
-* [`setAssetNumberOfLoops(...)`](#setassetnumberofloops)
-* [`setAssetEnablePositionUpdates(...)`](#setassetenablepositionupdates)
-* [`setAssetPositionUpdateInterval(...)`](#setassetpositionupdateinterval)
+* [`getPlayers()`](#getplayers)
+* [`preload(...)`](#preload)
+* [`unload(...)`](#unload)
+* [`getState(...)`](#getstate)
+* [`play(...)`](#play)
+* [`resume(...)`](#resume)
+* [`pause(...)`](#pause)
+* [`stop(...)`](#stop)
+* [`seek(...)`](#seek)
+* [`setVolume(...)`](#setvolume)
+* [`setRate(...)`](#setrate)
+* [`setNumberOfLoops(...)`](#setnumberofloops)
+* [`setEnablePositionUpdates(...)`](#setenablepositionupdates)
+* [`setPositionUpdateInterval(...)`](#setpositionupdateinterval)
 * [`addListener('sessionInterrupted', ...)`](#addlistenersessioninterrupted-)
 * [`addListener('sessionRouteChanged', ...)`](#addlistenersessionroutechanged-)
-* [`addListener('assetLoaded', ...)`](#addlistenerassetloaded-)
-* [`addListener('assetUnloaded', ...)`](#addlistenerassetunloaded-)
-* [`addListener('assetStarted', ...)`](#addlistenerassetstarted-)
-* [`addListener('assetPaused', ...)`](#addlistenerassetpaused-)
-* [`addListener('assetStopped', ...)`](#addlistenerassetstopped-)
-* [`addListener('assetSeeked', ...)`](#addlistenerassetseeked-)
-* [`addListener('assetCompleted', ...)`](#addlistenerassetcompleted-)
-* [`addListener('assetError', ...)`](#addlistenerasseterror-)
-* [`addListener('assetPositionUpdate', ...)`](#addlistenerassetpositionupdate-)
+* [`addListener('playerLoaded', ...)`](#addlistenerplayerloaded-)
+* [`addListener('playerUnloaded', ...)`](#addlistenerplayerunloaded-)
+* [`addListener('playerStarted', ...)`](#addlistenerplayerstarted-)
+* [`addListener('playerPaused', ...)`](#addlistenerplayerpaused-)
+* [`addListener('playerStopped', ...)`](#addlistenerplayerstopped-)
+* [`addListener('playerSeeked', ...)`](#addlistenerplayerseeked-)
+* [`addListener('playerCompleted', ...)`](#addlistenerplayercompleted-)
+* [`addListener('playerError', ...)`](#addlistenerplayererror-)
+* [`addListener('playerPositionUpdated', ...)`](#addlistenerplayerpositionupdated-)
 * [Interfaces](#interfaces)
 * [Type Aliases](#type-aliases)
 
@@ -86,210 +86,210 @@ resumeAllAfterInterruption() => Promise<ResumeAllAfterInterruptionResponse>
 --------------------
 
 
-### getAssets()
+### getPlayers()
 
 ```typescript
-getAssets() => Promise<GetAssetsResponse>
+getPlayers() => Promise<GetResponse>
 ```
 
-Asset
+Player
 
-**Returns:** <code>Promise&lt;<a href="#getassetsresponse">GetAssetsResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#getresponse">GetResponse</a>&gt;</code>
 
 --------------------
 
 
-### preloadAsset(...)
+### preload(...)
 
 ```typescript
-preloadAsset(options: PreloadAssetOptions) => Promise<PreloadAssetResponse>
+preload(options: PreloadOptions) => Promise<PreloadResponse>
 ```
 
-| Param         | Type                                                                |
-| ------------- | ------------------------------------------------------------------- |
-| **`options`** | <code><a href="#preloadassetoptions">PreloadAssetOptions</a></code> |
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#preloadoptions">PreloadOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#preloadassetresponse">PreloadAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#preloadresponse">PreloadResponse</a>&gt;</code>
 
 --------------------
 
 
-### unloadAsset(...)
+### unload(...)
 
 ```typescript
-unloadAsset(options: UnloadAssetOptions) => Promise<UnloadAssetResponse>
+unload(options: UnloadOptions) => Promise<UnloadResponse>
 ```
 
-| Param         | Type                                                              |
-| ------------- | ----------------------------------------------------------------- |
-| **`options`** | <code><a href="#unloadassetoptions">UnloadAssetOptions</a></code> |
+| Param         | Type                                                    |
+| ------------- | ------------------------------------------------------- |
+| **`options`** | <code><a href="#unloadoptions">UnloadOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#unloadassetresponse">UnloadAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#unloadresponse">UnloadResponse</a>&gt;</code>
 
 --------------------
 
 
-### getAssetState(...)
+### getState(...)
 
 ```typescript
-getAssetState(options: GetAssetStateOptions) => Promise<GetAssetStateResponse>
+getState(options: GetStateOptions) => Promise<GetStateResponse>
 ```
 
-| Param         | Type                                                                  |
-| ------------- | --------------------------------------------------------------------- |
-| **`options`** | <code><a href="#getassetstateoptions">GetAssetStateOptions</a></code> |
+| Param         | Type                                                        |
+| ------------- | ----------------------------------------------------------- |
+| **`options`** | <code><a href="#getstateoptions">GetStateOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#getassetstateresponse">GetAssetStateResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#getstateresponse">GetStateResponse</a>&gt;</code>
 
 --------------------
 
 
-### playAsset(...)
+### play(...)
 
 ```typescript
-playAsset(options: PlayAssetOptions) => Promise<PlayAssetResponse>
+play(options: PlayOptions) => Promise<PlayResponse>
+```
+
+| Param         | Type                                                |
+| ------------- | --------------------------------------------------- |
+| **`options`** | <code><a href="#playoptions">PlayOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#playresponse">PlayResponse</a>&gt;</code>
+
+--------------------
+
+
+### resume(...)
+
+```typescript
+resume(options: ResumeOptions) => Promise<ResumeResponse>
+```
+
+| Param         | Type                                                    |
+| ------------- | ------------------------------------------------------- |
+| **`options`** | <code><a href="#resumeoptions">ResumeOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#resumeresponse">ResumeResponse</a>&gt;</code>
+
+--------------------
+
+
+### pause(...)
+
+```typescript
+pause(options: PauseOptions) => Promise<PauseResponse>
+```
+
+| Param         | Type                                                  |
+| ------------- | ----------------------------------------------------- |
+| **`options`** | <code><a href="#pauseoptions">PauseOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#pauseresponse">PauseResponse</a>&gt;</code>
+
+--------------------
+
+
+### stop(...)
+
+```typescript
+stop(options: StopOptions) => Promise<StopResponse>
+```
+
+| Param         | Type                                                |
+| ------------- | --------------------------------------------------- |
+| **`options`** | <code><a href="#stopoptions">StopOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#stopresponse">StopResponse</a>&gt;</code>
+
+--------------------
+
+
+### seek(...)
+
+```typescript
+seek(options: SeekOptions) => Promise<SeekResponse>
+```
+
+| Param         | Type                                                |
+| ------------- | --------------------------------------------------- |
+| **`options`** | <code><a href="#seekoptions">SeekOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#seekresponse">SeekResponse</a>&gt;</code>
+
+--------------------
+
+
+### setVolume(...)
+
+```typescript
+setVolume(options: SetVolumeOptions) => Promise<SetVolumeResponse>
 ```
 
 | Param         | Type                                                          |
 | ------------- | ------------------------------------------------------------- |
-| **`options`** | <code><a href="#playassetoptions">PlayAssetOptions</a></code> |
+| **`options`** | <code><a href="#setvolumeoptions">SetVolumeOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#playassetresponse">PlayAssetResponse</a>&gt;</code>
-
---------------------
-
-
-### resumeAsset(...)
-
-```typescript
-resumeAsset(options: ResumeAssetOptions) => Promise<ResumeAssetResponse>
-```
-
-| Param         | Type                                                              |
-| ------------- | ----------------------------------------------------------------- |
-| **`options`** | <code><a href="#resumeassetoptions">ResumeAssetOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#resumeassetresponse">ResumeAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setvolumeresponse">SetVolumeResponse</a>&gt;</code>
 
 --------------------
 
 
-### pauseAsset(...)
+### setRate(...)
 
 ```typescript
-pauseAsset(options: PauseAssetOptions) => Promise<PauseAssetResponse>
+setRate(options: SetRateOptions) => Promise<SetRateResponse>
 ```
 
-| Param         | Type                                                            |
-| ------------- | --------------------------------------------------------------- |
-| **`options`** | <code><a href="#pauseassetoptions">PauseAssetOptions</a></code> |
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#setrateoptions">SetRateOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#pauseassetresponse">PauseAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setrateresponse">SetRateResponse</a>&gt;</code>
 
 --------------------
 
 
-### stopAsset(...)
+### setNumberOfLoops(...)
 
 ```typescript
-stopAsset(options: StopAssetOptions) => Promise<StopAssetResponse>
+setNumberOfLoops(options: SetNumberOfLoopsOptions) => Promise<SetNumberOfLoopsResponse>
 ```
 
-| Param         | Type                                                          |
-| ------------- | ------------------------------------------------------------- |
-| **`options`** | <code><a href="#stopassetoptions">StopAssetOptions</a></code> |
+| Param         | Type                                                                        |
+| ------------- | --------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setnumberofloopsoptions">SetNumberOfLoopsOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#stopassetresponse">StopAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setnumberofloopsresponse">SetNumberOfLoopsResponse</a>&gt;</code>
 
 --------------------
 
 
-### seekAsset(...)
+### setEnablePositionUpdates(...)
 
 ```typescript
-seekAsset(options: SeekAssetOptions) => Promise<SeekAssetResponse>
+setEnablePositionUpdates(options: SetEnablePositionUpdatesOptions) => Promise<SetEnablePositionUpdatesResponse>
 ```
 
-| Param         | Type                                                          |
-| ------------- | ------------------------------------------------------------- |
-| **`options`** | <code><a href="#seekassetoptions">SeekAssetOptions</a></code> |
+| Param         | Type                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setenablepositionupdatesoptions">SetEnablePositionUpdatesOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#seekassetresponse">SeekAssetResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setenablepositionupdatesresponse">SetEnablePositionUpdatesResponse</a>&gt;</code>
 
 --------------------
 
 
-### setAssetVolume(...)
+### setPositionUpdateInterval(...)
 
 ```typescript
-setAssetVolume(options: SetAssetVolumeOptions) => Promise<SetAssetVolumeResponse>
+setPositionUpdateInterval(options: SetPositionUpdateIntervalOptions) => Promise<SetPositionUpdateIntervalResponse>
 ```
 
-| Param         | Type                                                                    |
-| ------------- | ----------------------------------------------------------------------- |
-| **`options`** | <code><a href="#setassetvolumeoptions">SetAssetVolumeOptions</a></code> |
+| Param         | Type                                                                                          |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setpositionupdateintervaloptions">SetPositionUpdateIntervalOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#setassetvolumeresponse">SetAssetVolumeResponse</a>&gt;</code>
-
---------------------
-
-
-### setAssetRate(...)
-
-```typescript
-setAssetRate(options: SetAssetRateOptions) => Promise<SetAssetRateResponse>
-```
-
-| Param         | Type                                                                |
-| ------------- | ------------------------------------------------------------------- |
-| **`options`** | <code><a href="#setassetrateoptions">SetAssetRateOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#setassetrateresponse">SetAssetRateResponse</a>&gt;</code>
-
---------------------
-
-
-### setAssetNumberOfLoops(...)
-
-```typescript
-setAssetNumberOfLoops(options: SetAssetNumberOfLoopsOptions) => Promise<SetAssetNumberOfLoopsResponse>
-```
-
-| Param         | Type                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#setassetnumberofloopsoptions">SetAssetNumberOfLoopsOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#setassetnumberofloopsresponse">SetAssetNumberOfLoopsResponse</a>&gt;</code>
-
---------------------
-
-
-### setAssetEnablePositionUpdates(...)
-
-```typescript
-setAssetEnablePositionUpdates(options: SetAssetEnablePositionUpdatesOptions) => Promise<SetAssetEnablePositionUpdatesResponse>
-```
-
-| Param         | Type                                                                                                  |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#setassetenablepositionupdatesoptions">SetAssetEnablePositionUpdatesOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#setassetenablepositionupdatesresponse">SetAssetEnablePositionUpdatesResponse</a>&gt;</code>
-
---------------------
-
-
-### setAssetPositionUpdateInterval(...)
-
-```typescript
-setAssetPositionUpdateInterval(options: SetAssetPositionUpdateIntervalOptions) => Promise<SetAssetPositionUpdateIntervalResponse>
-```
-
-| Param         | Type                                                                                                    |
-| ------------- | ------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#setassetpositionupdateintervaloptions">SetAssetPositionUpdateIntervalOptions</a></code> |
-
-**Returns:** <code>Promise&lt;<a href="#setassetpositionupdateintervalresponse">SetAssetPositionUpdateIntervalResponse</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#setpositionupdateintervalresponse">SetPositionUpdateIntervalResponse</a>&gt;</code>
 
 --------------------
 
@@ -328,146 +328,146 @@ addListener(eventName: 'sessionRouteChanged', listenerFunc: (data: SessionRouteC
 --------------------
 
 
-### addListener('assetLoaded', ...)
+### addListener('playerLoaded', ...)
 
 ```typescript
-addListener(eventName: AssetLoadedEvent['eventName'], listenerFunc: EventListener<AssetLoadedEvent>) => Promise<PluginListenerHandle>
+addListener(eventName: PlayerLoadedEvent['eventName'], listenerFunc: EventListener<PlayerLoadedEvent>) => Promise<PluginListenerHandle>
 ```
 
 Add a listener for an event.
 
-| Param              | Type                                                                                                            |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetLoaded'</code>                                                                                      |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetloadedevent">AssetLoadedEvent</a>&gt;</code> |
-
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
-
---------------------
-
-
-### addListener('assetUnloaded', ...)
-
-```typescript
-addListener(eventName: AssetUnloadedEvent['eventName'], listenerFunc: EventListener<AssetUnloadedEvent>) => Promise<PluginListenerHandle>
-```
-
-| Param              | Type                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetUnloaded'</code>                                                                                        |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetunloadedevent">AssetUnloadedEvent</a>&gt;</code> |
-
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
-
---------------------
-
-
-### addListener('assetStarted', ...)
-
-```typescript
-addListener(eventName: AssetStartedEvent['eventName'], listenerFunc: EventListener<AssetStartedEvent>) => Promise<PluginListenerHandle>
-```
-
 | Param              | Type                                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetStarted'</code>                                                                                       |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetstartedevent">AssetStartedEvent</a>&gt;</code> |
+| **`eventName`**    | <code>'playerLoaded'</code>                                                                                       |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerloadedevent">PlayerLoadedEvent</a>&gt;</code> |
 
 **Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
 
-### addListener('assetPaused', ...)
+### addListener('playerUnloaded', ...)
 
 ```typescript
-addListener(eventName: AssetPausedEvent['eventName'], listenerFunc: EventListener<AssetPausedEvent>) => Promise<PluginListenerHandle>
-```
-
-| Param              | Type                                                                                                            |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetPaused'</code>                                                                                      |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetpausedevent">AssetPausedEvent</a>&gt;</code> |
-
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
-
---------------------
-
-
-### addListener('assetStopped', ...)
-
-```typescript
-addListener(eventName: AssetStoppedEvent['eventName'], listenerFunc: EventListener<AssetStoppedEvent>) => Promise<PluginListenerHandle>
-```
-
-| Param              | Type                                                                                                              |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetStopped'</code>                                                                                       |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetstoppedevent">AssetStoppedEvent</a>&gt;</code> |
-
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
-
---------------------
-
-
-### addListener('assetSeeked', ...)
-
-```typescript
-addListener(eventName: AssetSeekedEvent['eventName'], listenerFunc: EventListener<AssetSeekedEvent>) => Promise<PluginListenerHandle>
-```
-
-| Param              | Type                                                                                                            |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetSeeked'</code>                                                                                      |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetseekedevent">AssetSeekedEvent</a>&gt;</code> |
-
-**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
-
---------------------
-
-
-### addListener('assetCompleted', ...)
-
-```typescript
-addListener(eventName: AssetCompletedEvent['eventName'], listenerFunc: EventListener<AssetCompletedEvent>) => Promise<PluginListenerHandle>
+addListener(eventName: PlayerUnloadedEvent['eventName'], listenerFunc: EventListener<PlayerUnloadedEvent>) => Promise<PluginListenerHandle>
 ```
 
 | Param              | Type                                                                                                                  |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetCompleted'</code>                                                                                         |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetcompletedevent">AssetCompletedEvent</a>&gt;</code> |
+| **`eventName`**    | <code>'playerUnloaded'</code>                                                                                         |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerunloadedevent">PlayerUnloadedEvent</a>&gt;</code> |
 
 **Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
 
-### addListener('assetError', ...)
+### addListener('playerStarted', ...)
 
 ```typescript
-addListener(eventName: AssetErrorEvent['eventName'], listenerFunc: EventListener<AssetErrorEvent>) => Promise<PluginListenerHandle>
+addListener(eventName: PlayerStartedEvent['eventName'], listenerFunc: EventListener<PlayerStartedEvent>) => Promise<PluginListenerHandle>
 ```
 
-| Param              | Type                                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetError'</code>                                                                                     |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#asseterrorevent">AssetErrorEvent</a>&gt;</code> |
+| Param              | Type                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerStarted'</code>                                                                                        |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerstartedevent">PlayerStartedEvent</a>&gt;</code> |
 
 **Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
 --------------------
 
 
-### addListener('assetPositionUpdate', ...)
+### addListener('playerPaused', ...)
 
 ```typescript
-addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: EventListener<AssetPositionUpdateEvent>) => Promise<PluginListenerHandle>
+addListener(eventName: PlayerPausedEvent['eventName'], listenerFunc: EventListener<PlayerPausedEvent>) => Promise<PluginListenerHandle>
 ```
 
-| Param              | Type                                                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| **`eventName`**    | <code>'assetPositionUpdate'</code>                                                                                              |
-| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#assetpositionupdateevent">AssetPositionUpdateEvent</a>&gt;</code> |
+| Param              | Type                                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerPaused'</code>                                                                                       |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerpausedevent">PlayerPausedEvent</a>&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### addListener('playerStopped', ...)
+
+```typescript
+addListener(eventName: PlayerStoppedEvent['eventName'], listenerFunc: EventListener<PlayerStoppedEvent>) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerStopped'</code>                                                                                        |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerstoppedevent">PlayerStoppedEvent</a>&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### addListener('playerSeeked', ...)
+
+```typescript
+addListener(eventName: PlayerSeekedEvent['eventName'], listenerFunc: EventListener<PlayerSeekedEvent>) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerSeeked'</code>                                                                                       |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerseekedevent">PlayerSeekedEvent</a>&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### addListener('playerCompleted', ...)
+
+```typescript
+addListener(eventName: PlayerCompletedEvent['eventName'], listenerFunc: EventListener<PlayerCompletedEvent>) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerCompleted'</code>                                                                                          |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playercompletedevent">PlayerCompletedEvent</a>&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### addListener('playerError', ...)
+
+```typescript
+addListener(eventName: PlayerErrorEvent['eventName'], listenerFunc: EventListener<PlayerErrorEvent>) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                                                                                            |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerError'</code>                                                                                      |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playererrorevent">PlayerErrorEvent</a>&gt;</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### addListener('playerPositionUpdated', ...)
+
+```typescript
+addListener(eventName: PlayerPositionUpdatedEvent['eventName'], listenerFunc: EventListener<PlayerPositionUpdatedEvent>) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                                                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **`eventName`**    | <code>'playerPositionUpdated'</code>                                                                                                |
+| **`listenerFunc`** | <code><a href="#eventlistener">EventListener</a>&lt;<a href="#playerpositionupdatedevent">PlayerPositionUpdatedEvent</a>&gt;</code> |
 
 **Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
@@ -490,28 +490,26 @@ addListener(eventName: AssetPositionUpdateEvent['eventName'], listenerFunc: Even
 
 #### PauseAllForInterruptionResponse
 
-| Prop           | Type                  | Description                                 |
-| -------------- | --------------------- | ------------------------------------------- |
-| **`assetIds`** | <code>string[]</code> | List of asset identifiers that were paused. |
+| Prop      | Type                  | Description                                  |
+| --------- | --------------------- | -------------------------------------------- |
+| **`ids`** | <code>string[]</code> | List of player identifiers that were paused. |
 
 
 #### ResumeAllAfterInterruptionResponse
 
-| Prop           | Type                  | Description                                  |
-| -------------- | --------------------- | -------------------------------------------- |
-| **`assetIds`** | <code>string[]</code> | List of asset identifiers that were resumed. |
+| Prop      | Type                  | Description                                   |
+| --------- | --------------------- | --------------------------------------------- |
+| **`ids`** | <code>string[]</code> | List of player identifiers that were resumed. |
 
 
-#### GetAssetsResponse
+#### GetResponse
 
-Asset
-
-| Prop         | Type                  | Description                |
-| ------------ | --------------------- | -------------------------- |
-| **`assets`** | <code>string[]</code> | List of asset identifiers. |
+| Prop      | Type                  | Description                 |
+| --------- | --------------------- | --------------------------- |
+| **`ids`** | <code>string[]</code> | List of player identifiers. |
 
 
-#### PreloadAssetResponse
+#### PreloadResponse
 
 | Prop           | Type                | Description                       |
 | -------------- | ------------------- | --------------------------------- |
@@ -519,207 +517,209 @@ Asset
 | **`duration`** | <code>number</code> | Duration of the asset in seconds. |
 
 
-#### PreloadAssetOptions
+#### PreloadOptions
 
-| Prop                         | Type                 | Description                                                                                                                                                                                                                                                                                                                                                 | Default            |
-| ---------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| **`id`**                     | <code>string</code>  | Unique identifier for the asset.                                                                                                                                                                                                                                                                                                                            |                    |
-| **`source`**                 | <code>string</code>  | Source of the asset. Can be a local file path or a remote URL.                                                                                                                                                                                                                                                                                              |                    |
-| **`volume`**                 | <code>number</code>  | Volume of the asset. Range is from `0.0` (silent) to `1.0` (full volume).                                                                                                                                                                                                                                                                                   | <code>1.0</code>   |
-| **`rate`**                   | <code>number</code>  | Playback rate of the asset. Range is from `0.5` (half speed) to `2.0` (double speed).                                                                                                                                                                                                                                                                       | <code>1.0</code>   |
-| **`numberOfLoops`**          | <code>number</code>  | Number of times the asset should loop. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops.                                                                                                                                                                                                                   | <code>0</code>     |
-| **`enablePositionUpdates`**  | <code>boolean</code> | Whether to enable position updates for the asset. This allows the asset to send periodic updates about its current playback position. If enabled, the asset will send position updates at the interval specified by `positionUpdateInterval`. You can listen for these updates using the `NativeAudio.addListener('assetPositionUpdate', callback)` method. | <code>false</code> |
-| **`positionUpdateInterval`** | <code>number</code>  | Interval in seconds for position updates. Minimum value is `0.1`. Maximum value is `2.0`.                                                                                                                                                                                                                                                                   | <code>0.5</code>   |
-
-
-#### UnloadAssetResponse
-
-| Prop     | Type                | Description                               |
-| -------- | ------------------- | ----------------------------------------- |
-| **`id`** | <code>string</code> | Unique identifier for the unloaded asset. |
+| Prop                         | Type                            | Description                                                                                                                                                                                                                                                                                                                                                      | Default            |
+| ---------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| **`type`**                   | <code>'asset' \| 'mixer'</code> | Type of the player to preload.                                                                                                                                                                                                                                                                                                                                   |                    |
+| **`id`**                     | <code>string</code>             | Unique identifier for the player.                                                                                                                                                                                                                                                                                                                                |                    |
+| **`source`**                 | <code>string</code>             | Source of the player to preload. Can be a local file path or a remote URL.                                                                                                                                                                                                                                                                                       |                    |
+| **`volume`**                 | <code>number</code>             | Volume of the player. Range is from `0.0` (silent) to `1.0` (full volume).                                                                                                                                                                                                                                                                                       | <code>1.0</code>   |
+| **`rate`**                   | <code>number</code>             | Playback rate of the player. Range is from `0.5` (half speed) to `2.0` (double speed).                                                                                                                                                                                                                                                                           | <code>1.0</code>   |
+| **`numberOfLoops`**          | <code>number</code>             | Number of times the player should loop. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops.                                                                                                                                                                                                                       | <code>0</code>     |
+| **`enablePositionUpdates`**  | <code>boolean</code>            | Whether to enable position updates for the player. This allows the player to send periodic updates about its current playback position. If enabled, the player will send position updates at the interval specified by `positionUpdateInterval`. You can listen for these updates using the `NativeAudio.addListener('playerPositionUpdated', callback)` method. | <code>false</code> |
+| **`positionUpdateInterval`** | <code>number</code>             | Interval in seconds for position updates. Minimum value is `0.1`. Maximum value is `2.0`.                                                                                                                                                                                                                                                                        | <code>0.5</code>   |
 
 
-#### UnloadAssetOptions
+#### UnloadResponse
 
 | Prop     | Type                | Description                                |
 | -------- | ------------------- | ------------------------------------------ |
-| **`id`** | <code>string</code> | Unique identifier for the asset to unload. |
+| **`id`** | <code>string</code> | Unique identifier for the unloaded player. |
 
 
-#### GetAssetStateResponse
+#### UnloadOptions
 
-| Prop                | Type                 | Description                                                                                                                       |
-| ------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **`id`**            | <code>string</code>  | Unique identifier for the asset.                                                                                                  |
-| **`isPlaying`**     | <code>boolean</code> | Whether the asset is currently playing.                                                                                           |
-| **`currentTime`**   | <code>number</code>  | Current playback time of the asset in seconds.                                                                                    |
-| **`duration`**      | <code>number</code>  | Duration of the asset in seconds.                                                                                                 |
-| **`volume`**        | <code>number</code>  | Volume level of the asset.                                                                                                        |
-| **`rate`**          | <code>number</code>  | Playback rate of the asset. Range is from `0.5` (half speed) to `2.0` (double speed).                                             |
-| **`numberOfLoops`** | <code>number</code>  | Number of loops for the asset. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops. |
+| Prop     | Type                | Description                                 |
+| -------- | ------------------- | ------------------------------------------- |
+| **`id`** | <code>string</code> | Unique identifier for the player to unload. |
 
 
-#### GetAssetStateOptions
+#### GetStateResponse
 
-| Prop     | Type                | Description                                          |
-| -------- | ------------------- | ---------------------------------------------------- |
-| **`id`** | <code>string</code> | Unique identifier for the asset to get the state of. |
-
-
-#### PlayAssetResponse
-
-| Prop            | Type                 | Description                                      |
-| --------------- | -------------------- | ------------------------------------------------ |
-| **`id`**        | <code>string</code>  | Unique identifier for the asset that was played. |
-| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.          |
-
-
-#### PlayAssetOptions
-
-| Prop     | Type                | Description                              |
-| -------- | ------------------- | ---------------------------------------- |
-| **`id`** | <code>string</code> | Unique identifier for the asset to play. |
+| Prop                | Type                            | Description                                                                                                                        |
+| ------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **`type`**          | <code>'asset' \| 'mixer'</code> | Type of the player. Can be either 'asset' or 'mixer'.                                                                              |
+| **`id`**            | <code>string</code>             | Unique identifier for the player.                                                                                                  |
+| **`isPlaying`**     | <code>boolean</code>            | Whether the player is currently playing.                                                                                           |
+| **`currentTime`**   | <code>number</code>             | Current playback time of the player in seconds.                                                                                    |
+| **`duration`**      | <code>number</code>             | Duration of the player in seconds.                                                                                                 |
+| **`volume`**        | <code>number</code>             | Volume level of the player.                                                                                                        |
+| **`rate`**          | <code>number</code>             | Playback rate of the player. Range is from `0.5` (half speed) to `2.0` (double speed).                                             |
+| **`numberOfLoops`** | <code>number</code>             | Number of loops for the player. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops. |
 
 
-#### ResumeAssetResponse
+#### GetStateOptions
+
+| Prop     | Type                | Description                                           |
+| -------- | ------------------- | ----------------------------------------------------- |
+| **`id`** | <code>string</code> | Unique identifier for the player to get the state of. |
+
+
+#### PlayResponse
 
 | Prop            | Type                 | Description                                       |
 | --------------- | -------------------- | ------------------------------------------------- |
-| **`id`**        | <code>string</code>  | Unique identifier for the asset that was resumed. |
-| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.           |
+| **`id`**        | <code>string</code>  | Unique identifier for the player that was played. |
+| **`isPlaying`** | <code>boolean</code> | Whether the player is currently playing.          |
 
 
-#### ResumeAssetOptions
-
-| Prop     | Type                | Description                                |
-| -------- | ------------------- | ------------------------------------------ |
-| **`id`** | <code>string</code> | Unique identifier for the asset to resume. |
-
-
-#### PauseAssetResponse
-
-| Prop            | Type                 | Description                                      |
-| --------------- | -------------------- | ------------------------------------------------ |
-| **`id`**        | <code>string</code>  | Unique identifier for the asset that was paused. |
-| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.          |
-
-
-#### PauseAssetOptions
+#### PlayOptions
 
 | Prop     | Type                | Description                               |
 | -------- | ------------------- | ----------------------------------------- |
-| **`id`** | <code>string</code> | Unique identifier for the asset to pause. |
+| **`id`** | <code>string</code> | Unique identifier for the player to play. |
 
 
-#### StopAssetResponse
+#### ResumeResponse
+
+| Prop            | Type                 | Description                                        |
+| --------------- | -------------------- | -------------------------------------------------- |
+| **`id`**        | <code>string</code>  | Unique identifier for the player that was resumed. |
+| **`isPlaying`** | <code>boolean</code> | Whether the player is currently playing.           |
+
+
+#### ResumeOptions
+
+| Prop     | Type                | Description                                 |
+| -------- | ------------------- | ------------------------------------------- |
+| **`id`** | <code>string</code> | Unique identifier for the player to resume. |
+
+
+#### PauseResponse
 
 | Prop            | Type                 | Description                                       |
 | --------------- | -------------------- | ------------------------------------------------- |
-| **`id`**        | <code>string</code>  | Unique identifier for the asset that was stopped. |
-| **`isPlaying`** | <code>boolean</code> | Whether the asset is currently playing.           |
+| **`id`**        | <code>string</code>  | Unique identifier for the player that was paused. |
+| **`isPlaying`** | <code>boolean</code> | Whether the player is currently playing.          |
 
 
-#### StopAssetOptions
+#### PauseOptions
 
-| Prop     | Type                | Description                              |
-| -------- | ------------------- | ---------------------------------------- |
-| **`id`** | <code>string</code> | Unique identifier for the asset to stop. |
-
-
-#### SeekAssetResponse
-
-| Prop              | Type                | Description                                                  |
-| ----------------- | ------------------- | ------------------------------------------------------------ |
-| **`id`**          | <code>string</code> | Unique identifier for the asset that was seeked.             |
-| **`currentTime`** | <code>number</code> | Current playback time of the asset after seeking in seconds. |
+| Prop     | Type                | Description                                |
+| -------- | ------------------- | ------------------------------------------ |
+| **`id`** | <code>string</code> | Unique identifier for the player to pause. |
 
 
-#### SeekAssetOptions
+#### StopResponse
 
-| Prop       | Type                | Description                              |
-| ---------- | ------------------- | ---------------------------------------- |
-| **`id`**   | <code>string</code> | Unique identifier for the asset to seek. |
-| **`time`** | <code>number</code> | Time in seconds to seek to.              |
-
-
-#### SetAssetVolumeResponse
-
-| Prop         | Type                | Description                                              |
-| ------------ | ------------------- | -------------------------------------------------------- |
-| **`id`**     | <code>string</code> | Unique identifier for the asset that had its volume set. |
-| **`volume`** | <code>number</code> | Volume level that was set for the asset.                 |
+| Prop            | Type                 | Description                                        |
+| --------------- | -------------------- | -------------------------------------------------- |
+| **`id`**        | <code>string</code>  | Unique identifier for the player that was stopped. |
+| **`isPlaying`** | <code>boolean</code> | Whether the player is currently playing.           |
 
 
-#### SetAssetVolumeOptions
+#### StopOptions
 
-| Prop         | Type                | Description                                                                      |
-| ------------ | ------------------- | -------------------------------------------------------------------------------- |
-| **`id`**     | <code>string</code> | Unique identifier for the asset to set the volume for.                           |
-| **`volume`** | <code>number</code> | Volume level for the asset. Range is from `0.0` (silent) to `1.0` (full volume). |
-
-
-#### SetAssetRateResponse
-
-| Prop       | Type                |
-| ---------- | ------------------- |
-| **`id`**   | <code>string</code> |
-| **`rate`** | <code>number</code> |
+| Prop     | Type                | Description                               |
+| -------- | ------------------- | ----------------------------------------- |
+| **`id`** | <code>string</code> | Unique identifier for the player to stop. |
 
 
-#### SetAssetRateOptions
+#### SeekResponse
 
-| Prop       | Type                | Description                                                                            |
-| ---------- | ------------------- | -------------------------------------------------------------------------------------- |
-| **`id`**   | <code>string</code> | Unique identifier for the asset to set the playback rate for.                          |
-| **`rate`** | <code>number</code> | Playback rate for the asset. Range is from `0.5` (half speed) to `2.0` (double speed). |
-
-
-#### SetAssetNumberOfLoopsResponse
-
-| Prop                | Type                |
-| ------------------- | ------------------- |
-| **`id`**            | <code>string</code> |
-| **`numberOfLoops`** | <code>number</code> |
+| Prop              | Type                | Description                                                   |
+| ----------------- | ------------------- | ------------------------------------------------------------- |
+| **`id`**          | <code>string</code> | Unique identifier for the player that was seeked.             |
+| **`currentTime`** | <code>number</code> | Current playback time of the player after seeking in seconds. |
 
 
-#### SetAssetNumberOfLoopsOptions
+#### SeekOptions
 
-| Prop                | Type                |
-| ------------------- | ------------------- |
-| **`id`**            | <code>string</code> |
-| **`numberOfLoops`** | <code>number</code> |
-
-
-#### SetAssetEnablePositionUpdatesResponse
-
-| Prop                        | Type                 |
-| --------------------------- | -------------------- |
-| **`id`**                    | <code>string</code>  |
-| **`enablePositionUpdates`** | <code>boolean</code> |
+| Prop       | Type                | Description                               |
+| ---------- | ------------------- | ----------------------------------------- |
+| **`id`**   | <code>string</code> | Unique identifier for the player to seek. |
+| **`time`** | <code>number</code> | Time in seconds to seek to.               |
 
 
-#### SetAssetEnablePositionUpdatesOptions
+#### SetVolumeResponse
 
-| Prop          | Type                 |
-| ------------- | -------------------- |
-| **`id`**      | <code>string</code>  |
-| **`enabled`** | <code>boolean</code> |
-
-
-#### SetAssetPositionUpdateIntervalResponse
-
-| Prop                         | Type                |
-| ---------------------------- | ------------------- |
-| **`id`**                     | <code>string</code> |
-| **`positionUpdateInterval`** | <code>number</code> |
+| Prop         | Type                | Description                                               |
+| ------------ | ------------------- | --------------------------------------------------------- |
+| **`id`**     | <code>string</code> | Unique identifier for the player that had its volume set. |
+| **`volume`** | <code>number</code> | Volume level that was set for the player.                 |
 
 
-#### SetAssetPositionUpdateIntervalOptions
+#### SetVolumeOptions
 
-| Prop                         | Type                |
-| ---------------------------- | ------------------- |
-| **`id`**                     | <code>string</code> |
-| **`positionUpdateInterval`** | <code>number</code> |
+| Prop         | Type                | Description                                                                       |
+| ------------ | ------------------- | --------------------------------------------------------------------------------- |
+| **`id`**     | <code>string</code> | Unique identifier for the player to set the volume for.                           |
+| **`volume`** | <code>number</code> | Volume level for the player. Range is from `0.0` (silent) to `1.0` (full volume). |
+
+
+#### SetRateResponse
+
+| Prop       | Type                | Description                                                      |
+| ---------- | ------------------- | ---------------------------------------------------------------- |
+| **`id`**   | <code>string</code> | Unique identifier for the player that had its playback rate set. |
+| **`rate`** | <code>number</code> | Playback rate that was set for the player.                       |
+
+
+#### SetRateOptions
+
+| Prop       | Type                | Description                                                                             |
+| ---------- | ------------------- | --------------------------------------------------------------------------------------- |
+| **`id`**   | <code>string</code> | Unique identifier for the player to set the playback rate for.                          |
+| **`rate`** | <code>number</code> | Playback rate for the player. Range is from `0.5` (half speed) to `2.0` (double speed). |
+
+
+#### SetNumberOfLoopsResponse
+
+| Prop                | Type                | Description                                                        |
+| ------------------- | ------------------- | ------------------------------------------------------------------ |
+| **`id`**            | <code>string</code> | Unique identifier for the player that had its number of loops set. |
+| **`numberOfLoops`** | <code>number</code> | Number of loops that was set for the player.                       |
+
+
+#### SetNumberOfLoopsOptions
+
+| Prop                | Type                | Description                                                                                                                        |
+| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **`id`**            | <code>string</code> | Unique identifier for the player to set the number of loops for.                                                                   |
+| **`numberOfLoops`** | <code>number</code> | Number of loops for the player. `-1` means infinite looping. `0` means no looping. Positive integers indicate the number of loops. |
+
+
+#### SetEnablePositionUpdatesResponse
+
+| Prop                        | Type                 | Description                                                                     |
+| --------------------------- | -------------------- | ------------------------------------------------------------------------------- |
+| **`id`**                    | <code>string</code>  | Unique identifier for the player that had position updates enabled or disabled. |
+| **`enablePositionUpdates`** | <code>boolean</code> | Whether position updates are enabled for the player.                            |
+
+
+#### SetEnablePositionUpdatesOptions
+
+| Prop          | Type                 | Description                                                                 |
+| ------------- | -------------------- | --------------------------------------------------------------------------- |
+| **`id`**      | <code>string</code>  | Unique identifier for the player to enable or disable position updates for. |
+| **`enabled`** | <code>boolean</code> | Whether to enable position updates for the player.                          |
+
+
+#### SetPositionUpdateIntervalResponse
+
+| Prop                         | Type                | Description                                                                 |
+| ---------------------------- | ------------------- | --------------------------------------------------------------------------- |
+| **`id`**                     | <code>string</code> | Unique identifier for the player that had its position update interval set. |
+| **`positionUpdateInterval`** | <code>number</code> | Position update interval that was set for the player.                       |
+
+
+#### SetPositionUpdateIntervalOptions
+
+| Prop                         | Type                | Description                                                                                                 |
+| ---------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **`id`**                     | <code>string</code> | Unique identifier for the player to set the position update interval for.                                   |
+| **`positionUpdateInterval`** | <code>number</code> | Interval in seconds for position updates. Minimum value is `0.1`. Maximum value is `2.0`. Default is `0.5`. |
 
 
 #### PluginListenerHandle
@@ -745,80 +745,80 @@ Asset
 | **`reason`**    | <code>number</code>                |
 
 
-#### AssetLoadedEvent
-
-| Prop            | Type                       |
-| --------------- | -------------------------- |
-| **`eventName`** | <code>'assetLoaded'</code> |
-| **`id`**        | <code>string</code>        |
-| **`duration`**  | <code>number</code>        |
-
-
-#### AssetUnloadedEvent
-
-| Prop            | Type                         |
-| --------------- | ---------------------------- |
-| **`eventName`** | <code>'assetUnloaded'</code> |
-| **`id`**        | <code>string</code>          |
-
-
-#### AssetStartedEvent
+#### PlayerLoadedEvent
 
 | Prop            | Type                        |
 | --------------- | --------------------------- |
-| **`eventName`** | <code>'assetStarted'</code> |
+| **`eventName`** | <code>'playerLoaded'</code> |
 | **`id`**        | <code>string</code>         |
+| **`duration`**  | <code>number</code>         |
 
 
-#### AssetPausedEvent
-
-| Prop            | Type                       |
-| --------------- | -------------------------- |
-| **`eventName`** | <code>'assetPaused'</code> |
-| **`id`**        | <code>string</code>        |
-
-
-#### AssetStoppedEvent
-
-| Prop            | Type                        |
-| --------------- | --------------------------- |
-| **`eventName`** | <code>'assetStopped'</code> |
-| **`id`**        | <code>string</code>         |
-
-
-#### AssetSeekedEvent
-
-| Prop              | Type                       |
-| ----------------- | -------------------------- |
-| **`eventName`**   | <code>'assetSeeked'</code> |
-| **`id`**          | <code>string</code>        |
-| **`currentTime`** | <code>number</code>        |
-
-
-#### AssetCompletedEvent
+#### PlayerUnloadedEvent
 
 | Prop            | Type                          |
 | --------------- | ----------------------------- |
-| **`eventName`** | <code>'assetCompleted'</code> |
+| **`eventName`** | <code>'playerUnloaded'</code> |
 | **`id`**        | <code>string</code>           |
 
 
-#### AssetErrorEvent
+#### PlayerStartedEvent
 
-| Prop            | Type                      |
-| --------------- | ------------------------- |
-| **`eventName`** | <code>'assetError'</code> |
-| **`id`**        | <code>string</code>       |
-| **`error`**     | <code>string</code>       |
+| Prop            | Type                         |
+| --------------- | ---------------------------- |
+| **`eventName`** | <code>'playerStarted'</code> |
+| **`id`**        | <code>string</code>          |
 
 
-#### AssetPositionUpdateEvent
+#### PlayerPausedEvent
 
-| Prop              | Type                               |
-| ----------------- | ---------------------------------- |
-| **`eventName`**   | <code>'assetPositionUpdate'</code> |
-| **`id`**          | <code>string</code>                |
-| **`currentTime`** | <code>number</code>                |
+| Prop            | Type                        |
+| --------------- | --------------------------- |
+| **`eventName`** | <code>'playerPaused'</code> |
+| **`id`**        | <code>string</code>         |
+
+
+#### PlayerStoppedEvent
+
+| Prop            | Type                         |
+| --------------- | ---------------------------- |
+| **`eventName`** | <code>'playerStopped'</code> |
+| **`id`**        | <code>string</code>          |
+
+
+#### PlayerSeekedEvent
+
+| Prop              | Type                        |
+| ----------------- | --------------------------- |
+| **`eventName`**   | <code>'playerSeeked'</code> |
+| **`id`**          | <code>string</code>         |
+| **`currentTime`** | <code>number</code>         |
+
+
+#### PlayerCompletedEvent
+
+| Prop            | Type                           |
+| --------------- | ------------------------------ |
+| **`eventName`** | <code>'playerCompleted'</code> |
+| **`id`**        | <code>string</code>            |
+
+
+#### PlayerErrorEvent
+
+| Prop            | Type                       |
+| --------------- | -------------------------- |
+| **`eventName`** | <code>'playerError'</code> |
+| **`id`**        | <code>string</code>        |
+| **`error`**     | <code>string</code>        |
+
+
+#### PlayerPositionUpdatedEvent
+
+| Prop              | Type                                 |
+| ----------------- | ------------------------------------ |
+| **`eventName`**   | <code>'playerPositionUpdated'</code> |
+| **`id`**          | <code>string</code>                  |
+| **`currentTime`** | <code>number</code>                  |
 
 
 ### Type Aliases

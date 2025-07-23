@@ -11,8 +11,9 @@ import AVFoundation
     private var _enableAutoInterruptionHandling = true
     private var _enableAutoIosSessionDeactivation = true
 
-    private var assetPlayers: [String: AssetPlayer] = [:]
-    private var pausedByInterruptionAssetIds: [String] = []
+    private var pausedByInterruptionIds: [String] = []
+
+    public var players: [String: PlayerProtocol] = [:]
 
     deinit {
         URLResolver.cleanupAllTemporaryFiles()
@@ -130,37 +131,33 @@ import AVFoundation
         }
     }
 
-    @objc public func pauseAllForInterruption() -> [String] {
-        var pausedAssetIds: [String] = []
+    @objc public func pauseAllForInterruption() -> [String: Any] {
+        var pausedIds: [String] = []
         self.queue.sync {
-            self.pausedByInterruptionAssetIds.removeAll()
-            for (assetId, assetPlayer) in self.assetPlayers {
-                if assetPlayer.isPlaying {
-                    let _ = assetPlayer.pause()
-                    self.pausedByInterruptionAssetIds.append(assetId)
+            self.pausedByInterruptionIds.removeAll()
+            for (id, player) in self.players {
+                if player.isPlaying {
+                    let _ = player.pause()
+                    self.pausedByInterruptionIds.append(id)
                 }
             }
-            pausedAssetIds = self.pausedByInterruptionAssetIds
+            pausedIds = self.pausedByInterruptionIds
         }
-        return [
-            "assetIds": pausedAssetIds
-        ]
+        return ["ids": pausedIds]
     }
 
-    @objc public func resumeAllAfterInterruption() -> [String] {
-        var resumedAssetIds: [String] = []
+    @objc public func resumeAllAfterInterruption() -> [String: Any] {
+        var resumedIds: [String] = []
         self.queue.sync {
-            for assetId in self.pausedByInterruptionAssetIds {
-                if let assetPlayer = self.assetPlayers[assetId] {
-                    let _ = assetPlayer.play()
-                    resumedAssetIds.append(assetId)
+            for id in self.pausedByInterruptionIds {
+                if let player = self.players[id] {
+                    let _ = player.play()
+                    resumedIds.append(id)
                 }
             }
-            self.pausedByInterruptionAssetIds.removeAll()
+            self.pausedByInterruptionIds.removeAll()
         }
-        return [
-            "assetIds": resumedAssetIds
-        ]
+        return ["ids": resumedIds]
     }
 
     private func manageSessionActivation(isActivating: Bool) {
@@ -172,7 +169,7 @@ import AVFoundation
         } else {
             var allStopped = true
             self.queue.sync {
-                allStopped = self.assetPlayers.values.allSatisfy { !$0.isPlaying }
+                allStopped = self.players.values.allSatisfy { !$0.isPlaying }
             }
 
             if allStopped && self.enableAutoIosSessionDeactivation {
@@ -185,16 +182,17 @@ import AVFoundation
     }
 }
 
-extension NativeAudio: NativeAudioAssetMethodsProtocol {
-    @objc public func getAssets() throws -> [String: Any] {
+extension NativeAudio: NativeAudioPlayerMethodsProtocol {
+    @objc public func getPlayers() throws -> [String: Any] {
         var ids: [String] = []
         self.queue.sync {
-            ids = Array(self.assetPlayers.keys)
+            ids = Array(self.players.keys)
         }
-        return ["assets": ids]
+        return ["ids": ids]
     }
 
-    @objc public func preloadAsset(
+    @objc public func preload(
+        _ type: String,
         _ id: String,
         source: String,
         volume: NSNumber?,
@@ -203,243 +201,250 @@ extension NativeAudio: NativeAudioAssetMethodsProtocol {
         enablePositionUpdates: NSNumber?,
         positionUpdateInterval: NSNumber?
     ) async throws -> [String: Any] {
-        print("Preloading asset with ID: \(id), source: \(source)")
-        self.removeAssetPlayer(id)
+        self.removePlayer(id)
 
         let url = try await URLResolver.resolveURL(source: source, id: id)
-        print("Preloading asset with ID: \(id), URL: \(url)")
 
-        let assetPlayer = try AssetPlayer(
-            id,
-            url: url,
-            volume: volume?.floatValue ?? 1.0,
-            rate: rate?.floatValue ?? 1.0,
-            numberOfLoops: numberOfLoops?.intValue ?? 0,
-            enablePositionUpdates: enablePositionUpdates?.boolValue ?? false,
-            positionUpdateInterval: positionUpdateInterval?.doubleValue ?? 0.5,
-            delegate: self
-        )
+        var player: PlayerProtocol
 
-        self.addAssetPlayer(id, player: assetPlayer)
+        let volume = volume?.floatValue ?? 1.0
+        let rate = rate?.floatValue ?? 1.0
+        let numberOfLoops = numberOfLoops?.intValue ?? 0
+        let enablePositionUpdates = enablePositionUpdates?.boolValue ?? false
+        let positionUpdateInterval = positionUpdateInterval?.doubleValue ?? 0.5
 
-        return ["id": id, "duration": assetPlayer.duration]
+        switch type {
+        case "asset":
+            player = try AssetPlayer(
+                id,
+                url: url,
+                volume: volume,
+                rate: rate,
+                numberOfLoops: numberOfLoops,
+                enablePositionUpdates: enablePositionUpdates,
+                positionUpdateInterval: positionUpdateInterval,
+                delegate: self
+            )
+        case "mixer":
+            player = try MixerPlayer(
+                id,
+                url: url,
+                volume: volume,
+                rate: rate,
+                numberOfLoops: numberOfLoops,
+                enablePositionUpdates: enablePositionUpdates,
+                positionUpdateInterval: positionUpdateInterval,
+                delegate: self
+            )
+        default:
+            throw NSError(
+                domain: "NativeAudio", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid type: \(type)"]
+            )
+        }
+
+        self.addPlayer(id, player: player)
+
+        return ["id": id, "duration": player.duration]
     }
 
-    @objc public func unloadAsset(_ id: String) throws -> [String: Any] {
-        let _ = try self.getAssetPlayer(id)
+    @objc public func unload(_ id: String) throws -> [String: Any] {
+        let _ = try self.getPlayer(id)
 
-        self.removeAssetPlayer(id)
+        self.removePlayer(id)
         URLResolver.cleanupTemporaryFile(for: id)
         self.manageSessionActivation(isActivating: false)
 
         return ["id": id]
     }
 
-    @objc public func getAssetState(_ id: String) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        return [
-            "id": id,
-            "isPlaying": assetPlayer.isPlaying,
-            "currentTime": assetPlayer.currentTime,
-            "duration": assetPlayer.duration,
-            "volume": assetPlayer.volume,
-            "rate": assetPlayer.rate,
-            "numberOfLoops": assetPlayer.numberOfLoops,
-        ]
+    @objc public func getState(_ id: String) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
+        return player.state
     }
 
-    @objc public func playAsset(_ id: String) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
+    @objc public func play(_ id: String) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
         self.manageSessionActivation(isActivating: true)
-        return ["id": id, "isPlaying": assetPlayer.play()]
+        return ["id": id, "isPlaying": player.play()]
     }
 
-    @objc public func pauseAsset(_ id: String) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
+    @objc public func pause(_ id: String) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
 
-        let result: [String: Any] = ["id": id, "isPlaying": assetPlayer.pause()]
+        let result: [String: Any] = ["id": id, "isPlaying": player.pause()]
 
         self.manageSessionActivation(isActivating: false)
 
         return result
     }
 
-    @objc public func stopAsset(_ id: String) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
+    @objc public func stop(_ id: String) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
 
-        let result: [String: Any] = ["id": id, "isPlaying": assetPlayer.stop()]
+        let result: [String: Any] = ["id": id, "isPlaying": player.stop()]
 
         self.manageSessionActivation(isActivating: false)
 
         return result
     }
 
-    @objc public func seekAsset(_ id: String, time: TimeInterval) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        return ["id": id, "currentTime": assetPlayer.seek(to: time)]
+    @objc public func seek(_ id: String, time: TimeInterval) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
+        return ["id": id, "currentTime": player.seek(to: time)]
     }
 
-    @objc public func setAssetVolume(_ id: String, volume: Float) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        assetPlayer.volume = volume
-        return ["id": id, "volume": assetPlayer.volume]
+    @objc public func setVolume(_ id: String, volume: Float) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
+        player.volume = volume
+        return ["id": id, "volume": player.volume]
     }
 
-    @objc public func setAssetRate(_ id: String, rate: Float) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        assetPlayer.rate = rate
-        return ["id": id, "rate": assetPlayer.rate]
+    @objc public func setRate(_ id: String, rate: Float) throws -> [String: Any] {
+        let player = try self.getPlayer(id)
+        player.rate = rate
+        return ["id": id, "rate": player.rate]
     }
 
-    @objc public func setAssetNumberOfLoops(
+    @objc public func setNumberOfLoops(
         _ id: String,
         numberOfLoops: Int
     ) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        assetPlayer.numberOfLoops = numberOfLoops
-        return ["id": id, "numberOfLoops": assetPlayer.numberOfLoops]
+        let player = try self.getPlayer(id)
+        player.numberOfLoops = numberOfLoops
+        return ["id": id, "numberOfLoops": player.numberOfLoops]
     }
 
-    @objc public func setAssetEnablePositionUpdates(
+    @objc public func setEnablePositionUpdates(
         _ id: String,
         enabled: Bool
     ) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        assetPlayer.enablePositionUpdates = enabled
+        let player = try self.getPlayer(id)
+        player.enablePositionUpdates = enabled
         return [
             "id": id,
             "enablePositionUpdates": enabled,
         ]
     }
 
-    @objc public func setAssetPositionUpdateInterval(
+    @objc public func setPositionUpdateInterval(
         _ id: String,
         interval: TimeInterval
     ) throws -> [String: Any] {
-        let assetPlayer = try self.getAssetPlayer(id)
-        assetPlayer.positionUpdateInterval = interval
+        let player = try self.getPlayer(id)
+        player.positionUpdateInterval = interval
         return [
             "id": id,
             "positionUpdateInterval": interval,
         ]
     }
 
-    @objc public func getAssetPlayer(_ id: String) throws -> AssetPlayer {
-        var player: AssetPlayer?
+    @objc public func getPlayer(_ id: String) throws -> PlayerProtocol {
+        var player: PlayerProtocol?
         self.queue.sync {
-            player = self.assetPlayers[id]
+            player = self.players[id]
         }
         guard
-            let assetPlayer = player
+            let playerInstance = player
         else {
             throw NSError(
                 domain: "NativeAudio", code: -3,
-                userInfo: [NSLocalizedDescriptionKey: "Asset not found"]
+                userInfo: [NSLocalizedDescriptionKey: "Player not found"]
             )
         }
-        return assetPlayer
+        return playerInstance
     }
 
-    @objc public func addAssetPlayer(_ id: String, player: AssetPlayer) {
+    @objc public func addPlayer(_ id: String, player: PlayerProtocol) {
         self.queue.async(flags: .barrier) {
-            self.assetPlayers[id] = player
+            self.players[id] = player
         }
     }
 
-    @objc public func removeAssetPlayer(_ id: String) {
+    @objc public func removePlayer(_ id: String) {
         self.queue.async(flags: .barrier) {
-            if let _ = self.assetPlayers[id] {
-                self.assetPlayers.removeValue(forKey: id)
+            if let _ = self.players[id] {
+                self.players.removeValue(forKey: id)
             }
         }
     }
 }
 
 extension NativeAudio: PlayerEventsProtocol {
-    @objc public func onAssetLoaded(_ id: String, duration: TimeInterval) {
+    @objc public func onPlayerLoaded(_ id: String, duration: TimeInterval) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetLoaded"),
+            name: NSNotification.Name("NativeAudioPlayerLoaded"),
             object: nil,
-            userInfo: ["eventName": "assetLoaded", "id": id, "duration": duration]
+            userInfo: ["eventName": "playerLoaded", "id": id, "duration": duration]
         )
     }
 
-    @objc public func onAssetUnloaded(_ id: String) {
+    @objc public func onPlayerUnloaded(_ id: String) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetUnloaded"),
+            name: NSNotification.Name("NativeAudioPlayerUnloaded"),
             object: nil,
-            userInfo: ["eventName": "assetUnloaded", "id": id]
+            userInfo: ["eventName": "playerUnloaded", "id": id]
         )
     }
 
-    @objc public func onAssetStarted(_ id: String) {
+    @objc public func onPlayerStarted(_ id: String) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetStarted"),
+            name: NSNotification.Name("NativeAudioPlayerStarted"),
             object: nil,
-            userInfo: ["eventName": "assetStarted", "id": id]
+            userInfo: ["eventName": "playerStarted", "id": id]
         )
     }
 
-    @objc public func onAssetPaused(_ id: String) {
+    @objc public func onPlayerPaused(_ id: String) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetPaused"),
+            name: NSNotification.Name("NativeAudioPlayerPaused"),
             object: nil,
-            userInfo: ["eventName": "assetPaused", "id": id]
+            userInfo: ["eventName": "playerPaused", "id": id]
         )
     }
 
-    @objc public func onAssetStopped(_ id: String) {
+    @objc public func onPlayerStopped(_ id: String) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetStopped"),
+            name: NSNotification.Name("NativeAudioPlayerStopped"),
             object: nil,
-            userInfo: ["eventName": "assetStopped", "id": id]
+            userInfo: ["eventName": "playerStopped", "id": id]
         )
     }
 
-    @objc public func onAssetSeeked(_ id: String, currentTime: TimeInterval) {
+    @objc public func onPlayerSeeked(_ id: String, currentTime: TimeInterval) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetSeeked"),
+            name: NSNotification.Name("NativeAudioPlayerSeeked"),
             object: nil,
-            userInfo: ["eventName": "assetSeeked", "id": id, "currentTime": currentTime]
+            userInfo: ["eventName": "playerSeeked", "id": id, "currentTime": currentTime]
         )
     }
 
-    @objc public func onAssetCompleted(_ id: String) {
+    @objc public func onPlayerCompleted(_ id: String) {
         self.manageSessionActivation(isActivating: false)
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetCompleted"),
+            name: NSNotification.Name("NativeAudioPlayerCompleted"),
             object: nil,
-            userInfo: ["eventName": "assetCompleted", "id": id]
+            userInfo: ["eventName": "playerCompleted", "id": id]
         )
     }
 
-    @objc public func onAssetError(_ id: String, error: String) {
+    @objc public func onPlayerError(_ id: String, error: String) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetError"),
+            name: NSNotification.Name("NativeAudioPlayerError"),
             object: nil,
-            userInfo: ["eventName": "assetError", "id": id, "error": error]
+            userInfo: ["eventName": "playerError", "id": id, "error": error]
         )
     }
 
-    @objc public func onAssetPositionUpdated(_ id: String, currentTime: TimeInterval) {
+    @objc public func onPlayerPositionUpdated(_ id: String, currentTime: TimeInterval) {
         NotificationCenter.default.post(
-            name: NSNotification.Name("NativeAudioAssetPositionUpdate"),
+            name: NSNotification.Name("NativeAudioPlayerPositionUpdated"),
             object: nil,
             userInfo: [
-                "eventName": "assetPositionUpdate", "id": id, "currentTime": currentTime,
+                "eventName": "playerPositionUpdated", "id": id, "currentTime": currentTime,
             ]
         )
     }
-
-    @objc public func onMixerLoaded(_ id: String, duration: TimeInterval) {}
-    @objc public func onMixerUnloaded(_ id: String) {}
-    @objc public func onMixerStarted(_ id: String) {}
-    @objc public func onMixerPaused(_ id: String) {}
-    @objc public func onMixerStopped(_ id: String) {}
-    @objc public func onMixerSeeked(_ id: String, currentTime: TimeInterval) {}
-    @objc public func onMixerCompleted(_ id: String) {}
-    @objc public func onMixerError(_ id: String, error: String) {}
-    @objc public func onMixerPositionUpdated(_ id: String, currentTime: TimeInterval) {}
 
     @objc public func onMixerBackgroundLoaded(
         _ mixerId: String,
