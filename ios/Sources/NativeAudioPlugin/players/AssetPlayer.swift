@@ -80,6 +80,13 @@ import AVFoundation
     private func stopPositionUpdates() {
         self.timer?.cancel()
         self.timer = nil
+
+        if self.enablePositionUpdates {
+            let delegate = self.delegate
+            DispatchQueue.main.async {
+                delegate?.onPlayerPositionUpdated(self.id, currentTime: self.currentTime)
+            }
+        }
     }
 
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -157,7 +164,6 @@ extension AssetPlayer: PlayerProtocol {
         }
         set(newValue) {
             let clampedInterval = max(0.1, min(2.0, newValue))
-            self.positionUpdateInterval = clampedInterval
             // self.queue.async(flags: .barrier) {
             self._positionUpdateInterval = clampedInterval
             // }

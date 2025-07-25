@@ -7,7 +7,8 @@ import AVFoundation
     @objc func preloadBackground(
         _ id: String,
         url: URL,
-        volume: Float
+        volume: Float,
+        rate: Float
     ) async throws -> [String: Any]
     @objc func unloadBackground(_ id: String) throws -> [String: Any]
 

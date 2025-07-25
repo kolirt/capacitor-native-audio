@@ -248,6 +248,36 @@ extension NativeAudio: NativeAudioPlayerMethodsProtocol {
         return ["id": id, "duration": player.duration]
     }
 
+    @objc public func preloadMixerBackground(
+        _ mixerId: String,
+        _ id: String,
+        source: String,
+        volume: NSNumber?,
+        rate: NSNumber?
+    ) async throws -> [String: Any] {
+        guard
+            let mixer = try self.getPlayer(mixerId) as? MixerPlayer
+        else {
+            throw NSError(
+                domain: "NativeAudio", code: -7,
+                userInfo: [NSLocalizedDescriptionKey: "Player is not a mixer"]
+            )
+        }
+
+        let url = try await URLResolver.resolveURL(source: source, id: mixerId + "_" + id)
+        let volume = volume?.floatValue ?? 1.0
+        let rate = rate?.floatValue ?? 1.0
+
+        let result = try await mixer.preloadBackground(
+            id,
+            url: url,
+            volume: volume,
+            rate: rate
+        )
+
+        return result
+    }
+
     @objc public func unload(_ id: String) throws -> [String: Any] {
         let _ = try self.getPlayer(id)
 
@@ -256,6 +286,22 @@ extension NativeAudio: NativeAudioPlayerMethodsProtocol {
         self.manageSessionActivation(isActivating: false)
 
         return ["id": id]
+    }
+
+    @objc public func unloadMixerBackground(_ mixerId: String, _ id: String) throws -> [String: Any]
+    {
+        guard
+            let mixer = try self.getPlayer(mixerId) as? MixerPlayer
+        else {
+            throw NSError(
+                domain: "NativeAudio", code: -7,
+                userInfo: [NSLocalizedDescriptionKey: "Player is not a mixer"]
+            )
+        }
+
+        let result = try mixer.unloadBackground(id)
+
+        return result
     }
 
     @objc public func getState(_ id: String) throws -> [String: Any] {

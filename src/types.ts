@@ -22,13 +22,13 @@ type AVAudioSessionCategoryOptions =
 
 export interface ConfigureSessionOptions {
   /**
-   * Automatically pause and resume all assets when the audio session is interrupted or resumed.
+   * Automatically pause and resume all players when the audio session is interrupted or resumed.
    *
    * @default true
    */
   enableAutoInterruptionHandling?: boolean;
   /**
-   * Automatically deactivate the IOS audio session when all assets are paused or stopped.
+   * Automatically deactivate the IOS audio session when all players are paused or stopped.
    *
    * @default true
    */
@@ -75,7 +75,7 @@ export interface PreloadOptions {
   /**
    * Type of the player to preload.
    */
-  type: 'asset' | 'mixer'
+  type: 'asset' | 'mixer';
   /**
    * Unique identifier for the player.
    */
@@ -129,11 +129,52 @@ export interface PreloadOptions {
 
 export interface PreloadResponse {
   /**
-   * Unique identifier for the asset.
+   * Unique identifier for the player that was preloaded.
    */
   id: string;
   /**
-   * Duration of the asset in seconds.
+   * Duration of the player in seconds.
+   */
+  duration: number;
+}
+
+export interface PreloadMixerBackgroundOptions {
+  /**
+   * Mixer identifier for the background player to preload.
+   */
+  mixerId: string;
+  /**
+   * Unique identifier for the background player to preload.
+   */
+  id: string;
+  /**
+   * Source of the player to preload.
+   * Can be a local file path or a remote URL.
+   */
+  source: string;
+  /**
+   * Volume of the player.
+   * Range is from `0.0` (silent) to `1.0` (full volume).
+   *
+   * @default 1.0
+   */
+  volume?: number;
+  /**
+   * Playback rate of the player.
+   * Range is from `0.5` (half speed) to `2.0` (double speed).
+   *
+   * @default 1.0
+   */
+  rate?: number;
+}
+
+export interface PreloadMixerBackgroundResponse {
+  /**
+   * Unique identifier for the background player that was preloaded.
+   */
+  id: string;
+  /**
+   * Duration of the background player in seconds.
    */
   duration: number;
 }
@@ -148,6 +189,24 @@ export interface UnloadOptions {
 export interface UnloadResponse {
   /**
    * Unique identifier for the unloaded player.
+   */
+  id: string;
+}
+
+export interface UnloadMixerBackgroundOptions {
+  /**
+   * Mixer identifier for the player to unload.
+   */
+  mixerId: string;
+  /**
+   * Identifier for the background player to unload.
+   */
+  id: string;
+}
+
+export interface UnloadMixerBackgroundResponse {
+  /**
+   * Identifier for the unloaded background player.
    */
   id: string;
 }

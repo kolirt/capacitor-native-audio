@@ -16,7 +16,16 @@ import AVFoundation
         positionUpdateInterval: NSNumber?
     ) async throws -> [String: Any]
 
+    @objc func preloadMixerBackground(
+        _ mixerId: String,
+        _ id: String,
+        source: String,
+        volume: NSNumber?,
+        rate: NSNumber?
+    ) async throws -> [String: Any]
+
     @objc func unload(_ id: String) throws -> [String: Any]
+    @objc func unloadMixerBackground(_ mixerId: String, _ id: String) throws -> [String: Any]
     @objc func getState(_ id: String) throws -> [String: Any]
     @objc func play(_ id: String) throws -> [String: Any]
     @objc func pause(_ id: String) throws -> [String: Any]

@@ -18,7 +18,9 @@ npx cap sync
 * [`resumeAllAfterInterruption()`](#resumeallafterinterruption)
 * [`getPlayers()`](#getplayers)
 * [`preload(...)`](#preload)
+* [`preloadMixerBackground(...)`](#preloadmixerbackground)
 * [`unload(...)`](#unload)
+* [`unloadMixerBackground(...)`](#unloadmixerbackground)
 * [`getState(...)`](#getstate)
 * [`play(...)`](#play)
 * [`resume(...)`](#resume)
@@ -114,6 +116,21 @@ preload(options: PreloadOptions) => Promise<PreloadResponse>
 --------------------
 
 
+### preloadMixerBackground(...)
+
+```typescript
+preloadMixerBackground(options: PreloadMixerBackgroundOptions) => Promise<PreloadMixerBackgroundResponse>
+```
+
+| Param         | Type                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#preloadmixerbackgroundoptions">PreloadMixerBackgroundOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#preloadmixerbackgroundresponse">PreloadMixerBackgroundResponse</a>&gt;</code>
+
+--------------------
+
+
 ### unload(...)
 
 ```typescript
@@ -125,6 +142,21 @@ unload(options: UnloadOptions) => Promise<UnloadResponse>
 | **`options`** | <code><a href="#unloadoptions">UnloadOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#unloadresponse">UnloadResponse</a>&gt;</code>
+
+--------------------
+
+
+### unloadMixerBackground(...)
+
+```typescript
+unloadMixerBackground(options: UnloadMixerBackgroundOptions) => Promise<UnloadMixerBackgroundResponse>
+```
+
+| Param         | Type                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#unloadmixerbackgroundoptions">UnloadMixerBackgroundOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#unloadmixerbackgroundresponse">UnloadMixerBackgroundResponse</a>&gt;</code>
 
 --------------------
 
@@ -481,8 +513,8 @@ addListener(eventName: PlayerPositionUpdatedEvent['eventName'], listenerFunc: Ev
 
 | Prop                                   | Type                                                                      | Description                                                                                                                                        | Default           |
 | -------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      | Automatically pause and resume all assets when the audio session is interrupted or resumed.                                                        | <code>true</code> |
-| **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      | Automatically deactivate the IOS audio session when all assets are paused or stopped.                                                              | <code>true</code> |
+| **`enableAutoInterruptionHandling`**   | <code>boolean</code>                                                      | Automatically pause and resume all players when the audio session is interrupted or resumed.                                                       | <code>true</code> |
+| **`enableAutoIosSessionDeactivation`** | <code>boolean</code>                                                      | Automatically deactivate the IOS audio session when all players are paused or stopped.                                                             | <code>true</code> |
 | **`iosCategory`**                      | <code><a href="#avaudiosessioncategory">AVAudioSessionCategory</a></code> | Unique identifier for the IOS audio session. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/category-swift.struct)       |                   |
 | **`iosMode`**                          | <code><a href="#avaudiosessionmode">AVAudioSessionMode</a></code>         | Unique identifier for the IOS audio session mode. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/mode-swift.struct)      |                   |
 | **`iosOptions`**                       | <code>AVAudioSessionCategoryOptions[]</code>                              | Options for the IOS audio session category. [docs](https://developer.apple.com/documentation/avfaudio/avaudiosession/categoryoptions-swift.struct) |                   |
@@ -511,10 +543,10 @@ addListener(eventName: PlayerPositionUpdatedEvent['eventName'], listenerFunc: Ev
 
 #### PreloadResponse
 
-| Prop           | Type                | Description                       |
-| -------------- | ------------------- | --------------------------------- |
-| **`id`**       | <code>string</code> | Unique identifier for the asset.  |
-| **`duration`** | <code>number</code> | Duration of the asset in seconds. |
+| Prop           | Type                | Description                                          |
+| -------------- | ------------------- | ---------------------------------------------------- |
+| **`id`**       | <code>string</code> | Unique identifier for the player that was preloaded. |
+| **`duration`** | <code>number</code> | Duration of the player in seconds.                   |
 
 
 #### PreloadOptions
@@ -531,6 +563,25 @@ addListener(eventName: PlayerPositionUpdatedEvent['eventName'], listenerFunc: Ev
 | **`positionUpdateInterval`** | <code>number</code>             | Interval in seconds for position updates. Minimum value is `0.1`. Maximum value is `2.0`.                                                                                                                                                                                                                                                                        | <code>0.5</code>   |
 
 
+#### PreloadMixerBackgroundResponse
+
+| Prop           | Type                | Description                                                     |
+| -------------- | ------------------- | --------------------------------------------------------------- |
+| **`id`**       | <code>string</code> | Unique identifier for the background player that was preloaded. |
+| **`duration`** | <code>number</code> | Duration of the background player in seconds.                   |
+
+
+#### PreloadMixerBackgroundOptions
+
+| Prop          | Type                | Description                                                                            | Default          |
+| ------------- | ------------------- | -------------------------------------------------------------------------------------- | ---------------- |
+| **`mixerId`** | <code>string</code> | Mixer identifier for the background player to preload.                                 |                  |
+| **`id`**      | <code>string</code> | Unique identifier for the background player to preload.                                |                  |
+| **`source`**  | <code>string</code> | Source of the player to preload. Can be a local file path or a remote URL.             |                  |
+| **`volume`**  | <code>number</code> | Volume of the player. Range is from `0.0` (silent) to `1.0` (full volume).             | <code>1.0</code> |
+| **`rate`**    | <code>number</code> | Playback rate of the player. Range is from `0.5` (half speed) to `2.0` (double speed). | <code>1.0</code> |
+
+
 #### UnloadResponse
 
 | Prop     | Type                | Description                                |
@@ -543,6 +594,21 @@ addListener(eventName: PlayerPositionUpdatedEvent['eventName'], listenerFunc: Ev
 | Prop     | Type                | Description                                 |
 | -------- | ------------------- | ------------------------------------------- |
 | **`id`** | <code>string</code> | Unique identifier for the player to unload. |
+
+
+#### UnloadMixerBackgroundResponse
+
+| Prop     | Type                | Description                                    |
+| -------- | ------------------- | ---------------------------------------------- |
+| **`id`** | <code>string</code> | Identifier for the unloaded background player. |
+
+
+#### UnloadMixerBackgroundOptions
+
+| Prop          | Type                | Description                                     |
+| ------------- | ------------------- | ----------------------------------------------- |
+| **`mixerId`** | <code>string</code> | Mixer identifier for the player to unload.      |
+| **`id`**      | <code>string</code> | Identifier for the background player to unload. |
 
 
 #### GetStateResponse

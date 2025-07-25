@@ -56,18 +56,27 @@ extension MixerPlayer: PlayerEventsProtocol {
 
     @objc public func onPlayerStarted(_ id: String) {
         if id == self.id + "_main" {
+            for (_, backgroundPlayer) in self.backgroundPlayers {
+                _ = backgroundPlayer.play()
+            }
             self.delegate?.onPlayerStarted(self.id)
         }
     }
 
     @objc public func onPlayerPaused(_ id: String) {
         if id == self.id + "_main" {
+            for (_, backgroundPlayer) in self.backgroundPlayers {
+                _ = backgroundPlayer.pause()
+            }
             self.delegate?.onPlayerPaused(self.id)
         }
     }
 
     @objc public func onPlayerStopped(_ id: String) {
         if id == self.id + "_main" {
+            for (_, backgroundPlayer) in self.backgroundPlayers {
+                _ = backgroundPlayer.stop()
+            }
             self.delegate?.onPlayerStopped(self.id)
         }
     }
@@ -80,12 +89,18 @@ extension MixerPlayer: PlayerEventsProtocol {
 
     @objc public func onPlayerCompleted(_ id: String) {
         if id == self.id + "_main" {
+            for (_, backgroundPlayer) in self.backgroundPlayers {
+                _ = backgroundPlayer.stop()
+            }
             self.delegate?.onPlayerCompleted(self.id)
         }
     }
 
     @objc public func onPlayerError(_ id: String, error: String) {
         if id == self.id + "_main" {
+            for (_, backgroundPlayer) in self.backgroundPlayers {
+                _ = backgroundPlayer.stop()
+            }
             self.delegate?.onPlayerError(self.id, error: error)
         }
     }
@@ -175,7 +190,8 @@ extension MixerPlayer: MixerPlayerProtocol {
     @objc public func preloadBackground(
         _ id: String,
         url: URL,
-        volume: Float
+        volume: Float,
+        rate: Float
     ) async throws -> [String: Any] {
         self.removeBackgroundPlayer(id)
 
@@ -192,12 +208,19 @@ extension MixerPlayer: MixerPlayerProtocol {
 
         self.addBackgroundPlayer(id, player: bgPlayer)
 
-        return ["id": id, "duration": 1]
+        if self.isPlaying {
+            _ = bgPlayer.play()
+        }
+
+        self.delegate?.onMixerBackgroundLoaded(self.id, id, duration: bgPlayer.duration)
+
+        return ["id": id, "duration": bgPlayer.duration]
     }
 
     @objc public func unloadBackground(_ id: String)
         throws -> [String: Any]
     {
+
         return ["id": id]
     }
 

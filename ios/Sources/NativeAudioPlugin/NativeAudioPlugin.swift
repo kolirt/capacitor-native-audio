@@ -16,7 +16,9 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "resumeAllAfterInterruption", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getPlayers", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "preload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "preloadMixerBackground", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "unload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "unloadMixerBackground", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getState", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "play", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "resume", returnType: CAPPluginReturnPromise),
@@ -187,6 +189,35 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
+    @objc func preloadMixerBackground(_ call: CAPPluginCall) {
+        guard
+            let mixerId = call.getString("mixerId"),
+            let id = call.getString("id"),
+            let source = call.getString("source")
+        else {
+            call.reject("Missing mixerId, id, or source")
+            return
+        }
+
+        let volume: NSNumber? = call.getFloat("volume").map { NSNumber(value: $0) }
+        let rate: NSNumber? = call.getFloat("rate").map { NSNumber(value: $0) }
+
+        Task {
+            do {
+                let result = try await self.implementation.preloadMixerBackground(
+                    mixerId,
+                    id,
+                    source: source,
+                    volume: volume,
+                    rate: rate
+                )
+                call.resolve(result)
+            } catch {
+                call.reject("Failed to preload mixer background: \(error.localizedDescription)")
+            }
+        }
+    }
+
     @objc func unload(_ call: CAPPluginCall) {
         guard
             let id = call.getString("id")
@@ -199,6 +230,22 @@ public class NativeAudioPlugin: CAPPlugin, CAPBridgedPlugin {
             call.resolve(result)
         } catch {
             call.reject("Failed to unload audio: \(error.localizedDescription)")
+        }
+    }
+
+    @objc func unloadMixerBackground(_ call: CAPPluginCall) {
+        guard
+            let mixerId = call.getString("mixerId"),
+            let id = call.getString("id")
+        else {
+            call.reject("Missing mixerId or id")
+            return
+        }
+        do {
+            let result = try self.implementation.unloadMixerBackground(mixerId, id)
+            call.resolve(result)
+        } catch {
+            call.reject("Failed to unload mixer background: \(error.localizedDescription)")
         }
     }
 

@@ -43,6 +43,10 @@ import type {
   StopResponse,
   UnloadOptions,
   UnloadResponse,
+  PreloadMixerBackgroundOptions,
+  PreloadMixerBackgroundResponse,
+  UnloadMixerBackgroundOptions,
+  UnloadMixerBackgroundResponse,
 } from './types';
 
 interface NativeAudioPlugin {
@@ -56,7 +60,9 @@ interface NativeAudioPlugin {
 
   getPlayers(): Promise<GetResponse>;
   preload(options: PreloadOptions): Promise<PreloadResponse>;
+  preloadMixerBackground(options: PreloadMixerBackgroundOptions): Promise<PreloadMixerBackgroundResponse>;
   unload(options: UnloadOptions): Promise<UnloadResponse>;
+  unloadMixerBackground(options: UnloadMixerBackgroundOptions): Promise<UnloadMixerBackgroundResponse>;
   getState(options: GetStateOptions): Promise<GetStateResponse>;
   play(options: PlayOptions): Promise<PlayResponse>;
   resume(options: ResumeOptions): Promise<ResumeResponse>;
